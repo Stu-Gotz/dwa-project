@@ -1,39 +1,43 @@
 <?php
-
-$envs = include 'env.php';
-
 session_start();
 
 $password = 'password';
 $hashpass = password_hash($password, PASSWORD_DEFAULT);
 // var_dump($hashpass);
 
-$user = [
-    'f_name' => "John",
-    'l_name' => "Doe",
-    'location' => "London, UK",
-    'email' => "john.doe@example.com",
-    'phone' => "+44 5321 553 099",
-    'pass' => "password",
-    'photo' => "./assets/1.jpg",
-    'type' => "RM"
-];
+function begin_session(){
+    $envs = include 'env.php';
+    $mysqli = new mysqli($envs['DB_HOST'], $envs['DB_USER'], $envs['DB_PASS'], $envs['DB_NAME']);
+    if ($mysqli->connect_error) {
+        die('Failed to connect to database: ' . $mysqli->connect_error);
+    }
+    $user = [
+        'f_name' => "John",
+        'l_name' => "Doe",
+        'location' => "London, UK",
+        'email' => "john.doe@example.com",
+        'phone' => "+44 5321 553 099",
+        'pass' => "password",
+        'photo' => "1.jpg",
+        'type' => "RM"
+    ];
+    
+    $_SESSION['name'] = $user['f_name'] . ' ' . $user['l_name'];
+    $_SESSION['type'] = $user['type'];
+    $_SESSION['email'] = $user['email'];
+    $_SESSION['loc'] = $user['location'];
+    $_SESSION['photo'] = './assets/' . $user['photo'];
+    $_SESSION['phone'] = $user['phone'];
 
-$_SESSION['name'] = $user['f_name'] . ' ' . $user['l_name'];
-$_SESSION['type'] = $user['type'];
-$_SESSION['email'] = $user['email'];
-$_SESSION['loc'] = $user['location'];
-$_SESSION['photo'] = $user['photo'];
-$_SESSION['phone'] = $user['phone'];
+    if($_SESSION['type'] === 'admin' or $_SESSION['type'] === 'RM'){
+        echo 'hello';
+    }
 
-$mysqli = new mysqli($envs['DB_HOST'], $envs['DB_USER'], $envs['DB_PASS'], $envs['DB_NAME']);
-
-if ($mysqli->connect_error) {
-    echo 'Failed to connect to database: ' . $mysqli->connect_error;
-    exit();
-} else {
-    $_SESSION['user'] = 'John Doe';
+    return $mysqli;
 }
+
+$_SESSION['password'] = $hashpass;
+
 
 echo '<!DOCTYPE html>
 <html lang="en">
@@ -65,8 +69,8 @@ echo '<!DOCTYPE html>
                     </svg>
                 </a>
                 <h2 class="title">Smarter Investing Inc.</h2>' ?>
-                <?php if (isset($_SESSION["user"])) {
-                    echo '<div class="login-area"><p style="margin-bottom:7px;">Welcome <a href="./profile.php">' . $_SESSION["user"] . '</p></a><a href="./logout.php" class="login"> Logout</a></div>';
+                <?php if (isset($_SESSION["name"])) {
+                    echo '<div class="login-area"><p style="margin-bottom:7px;">Welcome <a href="./profile.php">' . $_SESSION["name"] . '</p></a><a href="./logout.php" class="login"> Logout</a></div>';
                 } else {
                     echo '<a href="./login.php" class="login">Log In</a>';
                 } ?>

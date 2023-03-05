@@ -139,12 +139,21 @@ a:hover {
     background-image: url("../images/pexels-pixabay-534216.jpg");
 }
 
+.investing-header{
+    color: var(--color-dark);
+    border-bottom: 1px solid black;
+    border-left: 1px solid black;
+    padding-left: 15px;
+    padding-bottom: 5px;
+    margin-bottom: 10px;
+}
+.investing-text{
+    font-weight: 500;
+    font-size: 1.4rem;
+}
 .footer {
     font-size: .8rem;
 }
-
-
-
 
 .login-area {
     display: flex;

@@ -7,10 +7,10 @@ if (isset($_SESSION['name'])) {
   $name = $_SESSION['name'];
 }
 
+$default = './assets/blank-profile.png';
 
 
 ?>
-
 
 <div class="profile-page">
   <ul class="sidebar-menu">
@@ -22,9 +22,9 @@ if (isset($_SESSION['name'])) {
   </ul>
   <div class="profile">
     <div class="profile-head">
-      <div class="avatar"><img src="./assets/1.jpg" alt="" srcset="" /></div>
+      <div class="avatar"><img src="<?php if(isset($_SESSION['photo'])) { echo $_SESSION['photo']; } else { echo $default; }?>" alt="profile image for <?php echo $_SESSION['name']; ?>" srcset="" /></div>
       <div class="profile-info">
-        <div class="profile-name">John Doe</div>
+        <div class="profile-name"><?php echo $_SESSION['name']; ?></div>
         <div class="profile-type"><?php if (isset($_SESSION['type']) == 'RM') {
                                     echo 'Relation Manager';
                                   } else if (isset($_SESSION['type']) == 'client') {
@@ -55,6 +55,19 @@ if (isset($_SESSION['name'])) {
           </tr>
         </thead>
         <tbody class="table-data">
+          <?php 
+
+          // mysql query to get all users of type client with $_SESSION['name'] == table['manager']
+          // for($i=0; $i < table.length; $i++){
+          //   echo '<tr>
+          //   <td>'. $table['first_name'] . ' ' . table['last_name'] . '</td>
+          //   <td>' . $table['email'] . '</td>
+          //   <td>' . table['location'] . '</td>
+          //   <td>' . table['phone'] . '</td>
+          // </tr>';
+          // }
+          ?>
+          <!-- delete this after logic figured out -->
           <tr>
             <td>John Doe</td>
             <td>John.Doe@example.com</td>
