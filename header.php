@@ -5,7 +5,8 @@ $password = 'password';
 $hashpass = password_hash($password, PASSWORD_DEFAULT);
 // var_dump($hashpass);
 
-function begin_session(){
+function begin_session()
+{
     $envs = include 'env.php';
     $mysqli = new mysqli($envs['DB_HOST'], $envs['DB_USER'], $envs['DB_PASS'], $envs['DB_NAME']);
     if ($mysqli->connect_error) {
@@ -16,20 +17,23 @@ function begin_session(){
         'l_name' => "Doe",
         'location' => "London, UK",
         'email' => "john.doe@example.com",
-        'phone' => "+44 5321 553 099",
+        'phone' => "+445321553099",
         'pass' => "password",
         'photo' => "1.jpg",
         'type' => "RM"
     ];
-    
+
+    $phone = str_replace(' ', '', $user['phone']);
+    $phone = str_replace('-', '', $phone);
+
     $_SESSION['name'] = $user['f_name'] . ' ' . $user['l_name'];
     $_SESSION['type'] = $user['type'];
     $_SESSION['email'] = $user['email'];
     $_SESSION['loc'] = $user['location'];
     $_SESSION['photo'] = './assets/' . $user['photo'];
-    $_SESSION['phone'] = $user['phone'];
+    $_SESSION['phone'] = $phone;
 
-    if($_SESSION['type'] === 'admin' or $_SESSION['type'] === 'RM'){
+    if ($_SESSION['type'] === 'admin' or $_SESSION['type'] === 'RM') {
         echo 'hello';
     }
 
