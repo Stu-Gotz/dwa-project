@@ -139,7 +139,7 @@ a:hover {
     background-image: url("../images/pexels-pixabay-534216.jpg");
 }
 
-.investing-header{
+.investing-header {
     color: var(--color-dark);
     border-bottom: 1px solid black;
     border-left: 1px solid black;
@@ -147,10 +147,12 @@ a:hover {
     padding-bottom: 5px;
     margin-bottom: 10px;
 }
-.investing-text{
+
+.investing-text {
     font-weight: 500;
     font-size: 1.4rem;
 }
+
 .footer {
     font-size: .8rem;
 }
@@ -242,4 +244,14 @@ th {
 
 .settings-form div {
     margin-bottom: 10px;
+}
+
+.location {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#settings-location {
+    color: red;
 }

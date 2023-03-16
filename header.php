@@ -7,7 +7,14 @@ $hashpass = password_hash($password, PASSWORD_DEFAULT);
 
 function begin_session()
 {
-    $envs = include 'env.php';
+    $envs = [
+        'DB_USER' => 'root',
+        'DB_PASS' => '',
+        'DB_HOST' => 'localhost',
+        'DB_NAME' => 'dwa-db',
+    ];
+
+
     $mysqli = new mysqli($envs['DB_HOST'], $envs['DB_USER'], $envs['DB_PASS'], $envs['DB_NAME']);
     if ($mysqli->connect_error) {
         die('Failed to connect to database: ' . $mysqli->connect_error);

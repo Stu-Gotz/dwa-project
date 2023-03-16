@@ -3,4 +3,6 @@
 <form action="autologin.php" method="POST">
     <input type="submit" value="Continue" name="login">
 </form>
+
+<p>Interested in investing with us? <a href="register.php">Register here!</a></p>
 <?php include 'footer.php'; ?>
