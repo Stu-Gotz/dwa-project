@@ -1,55 +1,72 @@
 <?php
+//because this PHP file is included in every other php file, starting a session
+//is only needed once. 
 session_start();
 
-$password = 'password';
-$hashpass = password_hash($password, PASSWORD_DEFAULT);
-// var_dump($hashpass);
+// We learned about this in class (I think), but session is a built-in function
+//that I don't really know deep down, but basically it allows access to the $_SESSION
+//variable which we can use throughout the page to inject data as an object with php (see later)
 
-function begin_session()
+//******************
+//DEFAULT VALUE, DELETE LATER
+//*****************
+/*DELETE */ $password = 'password';
+/*DELETE */ $hashpass = password_hash($password, PASSWORD_DEFAULT);
+
+/*DELETE */// var_dump($hashpass);
+
+//This needs to be replaced with real data
+$envs = [
+    'DB_USER' => 'root',
+    'DB_PASS' => '',
+    'DB_HOST' => 'localhost',
+    'DB_NAME' => 'dwa-db',
+];
+$mysqli = new mysqli($envs['DB_HOST'], $envs['DB_USER'], $envs['DB_PASS'], $envs['DB_NAME']);
+
+//This will be used after zero-ing out a session (after a logout, for instance)
+//tl;dr it connects to the database, and sets user data in $_SESSION.
+//Because this is only called through logging in, it allows these values to be
+//accessed on pages such as their profile and others.
+function begin_session($mysqli, $login)
 {
-    $envs = [
-        'DB_USER' => 'root',
-        'DB_PASS' => '',
-        'DB_HOST' => 'localhost',
-        'DB_NAME' => 'dwa-db',
-    ];
 
 
-    $mysqli = new mysqli($envs['DB_HOST'], $envs['DB_USER'], $envs['DB_PASS'], $envs['DB_NAME']);
     if ($mysqli->connect_error) {
         die('Failed to connect to database: ' . $mysqli->connect_error);
-    }
-    $user = [
-        'f_name' => "John",
-        'l_name' => "Doe",
-        'location' => "London, UK",
-        'email' => "john.doe@example.com",
-        'phone' => "+445321553099",
-        'pass' => "password",
-        'photo' => "1.jpg",
-        'type' => "RM"
-    ];
+    } else {
 
-    $phone = str_replace(' ', '', $user['phone']);
-    $phone = str_replace('-', '', $phone);
+        //query the db
+        $sql = 'SELECT * FROM `users` WHERE email=?';
+        $stmt = $mysqli->prepare($sql);
+        $stmt->bind_param("s", $login);
+        $stmt->execute();
 
-    $_SESSION['name'] = $user['f_name'] . ' ' . $user['l_name'];
-    $_SESSION['type'] = $user['type'];
-    $_SESSION['email'] = $user['email'];
-    $_SESSION['loc'] = $user['location'];
-    $_SESSION['photo'] = './assets/' . $user['photo'];
-    $_SESSION['phone'] = $phone;
+        $res = $stmt->get_result();
+        $user = $res->fetch_assoc();
+        // $user = mysqli_fetch_assoc($res);
+        var_dump($user);
 
-    if ($_SESSION['type'] === 'admin' or $_SESSION['type'] === 'RM') {
-        echo 'hello';
+        // $phone = str_replace(' ', '', );
+        // $phone = str_replace('-', '', $phone);
+        // $phone = str_replace('+', '', $phone);
+
+        $_SESSION['name'] = $user['first_name'] . ' ' . $user['last_name'];
+        $_SESSION['type'] = $user['type'];
+        $_SESSION['email'] = $user['email'];
+        $_SESSION['loc'] = $user['location'];
+        $_SESSION['photo'] = './assets/' . $user['photo'];
+        $_SESSION['phone'] = $user['phone'];
+        $_SESSION['id'] = $user['id'];
+        $_SESSION['password'] = $user['password'];
     }
 
     return $mysqli;
 }
+var_dump($_SESSION);
 
-$_SESSION['password'] = $hashpass;
 
-
+// after we do all the functions and set all the data, 
 echo '<!DOCTYPE html>
 <html lang="en">
 
@@ -80,6 +97,7 @@ echo '<!DOCTYPE html>
                     </svg>
                 </a>
                 <h2 class="title">Smarter Investing Inc.</h2>' ?>
+                <!-- If they are logged in, it welcomes the user and gives a link to their profile. Note the $_SESSION variable and how that doesn't change -->
                 <?php if (isset($_SESSION["name"])) {
                     echo '<div class="login-area"><p style="margin-bottom:7px;">Welcome <a href="./profile.php">' . $_SESSION["name"] . '</p></a><a href="./logout.php" class="login"> Logout</a></div>';
                 } else {

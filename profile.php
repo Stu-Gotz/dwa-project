@@ -1,12 +1,7 @@
 <?php
 include 'header.php';
 
-
-
-if (isset($_SESSION['name'])) {
-  $name = $_SESSION['name'];
-}
-
+//contains the blank avatar image
 $default = './assets/blank-profile.png';
 
 
@@ -20,6 +15,8 @@ $default = './assets/blank-profile.png';
     <li><a href="/inbox.php">Messages</a></li>
 
   </ul>
+
+  <!-- Basically all this does is a bunch of if/else checks to dynamically set stuff based on if it is or isn't there -->
   <div class="profile">
     <div class="profile-head">
       <div class="avatar"><img src="<?php if(isset($_SESSION['photo'])) { echo $_SESSION['photo']; } else { echo $default; }?>" alt="profile image for <?php echo $_SESSION['name']; ?>" srcset="" /></div>

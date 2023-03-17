@@ -1,11 +1,44 @@
 <?php include 'header.php';
 
 if (isset($_POST['submit'])) {
-  if (!empty($_FILES['upload']['name'])) {
-    print_r($_FILES);
-  } else {
-    $message = '<p style="color: red;">Please choose a valid file</p>';
+  //check if there is a password
+  $id = $_SESSION['id'];
+
+  if($_POST['password']){
+    if ($_POST['password'] === $_POST['password-conf']){
+      $hashed = password_hash($_POST['password'], PASSWORD_DEFAULT);
+      $sql = "UPDATE `users` SET  password = '$hashed' WHERE id='$id';";
+      $stmt = $mysqli->prepare($sql);
+      $stmt->execute();
+
+      // $sql2 = "SELECT password FROM users WHERE id=?";
+      // $stmt2 = $mysqli->prepare($sql2);
+      // $stmt2->bind_param("i", $id);
+      // $stmt2->execute();
+      // $res = $stmt2->get_result();
+      // $record = $res->fetch_assoc();
+      
+    }
+    else {
+      echo 'passwords to not match';
+    }
   }
+  if($_POST['location']){
+    $loc = $_POST['location'];
+    $sql = "UPDATE `users` SET location = '$loc' WHERE id=$id";
+    $stmt = $mysqli->prepare($sql);
+    $stmt->execute();
+    $_SESSION["loc"] = $loc;
+  }
+  if($_POST['phone']){
+    $phone = $_POST['phone'];
+    $sql = "UPDATE `users` SET location = '$phone' WHERE id=$id";
+    $stmt = $mysqli->prepare($sql);
+    $stmt->execute();
+    $_SESSION["phone"] = $phone;
+  }
+
+  header("Location: ./profile.php");
 }
 
 
