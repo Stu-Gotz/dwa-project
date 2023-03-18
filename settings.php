@@ -32,7 +32,7 @@ if (isset($_POST['submit'])) {
   }
   if($_POST['phone']){
     $phone = $_POST['phone'];
-    $sql = "UPDATE `users` SET location = '$phone' WHERE id=$id";
+    $sql = "UPDATE `users` SET phone = '$phone' WHERE id=$id";
     $stmt = $mysqli->prepare($sql);
     $stmt->execute();
     $_SESSION["phone"] = $phone;

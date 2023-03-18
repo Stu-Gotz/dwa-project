@@ -9,10 +9,10 @@ $default = './assets/blank-profile.png';
 
 <div class="profile-page">
   <ul class="sidebar-menu">
-    <li><a href="/dashboard.php">Products</a></li>
-    <li><a href="settings.php">Settings</a></li>
-    <li><a href="/about.php">About</a></li>
-    <li><a href="/inbox.php">Messages</a></li>
+    <li><a href="./products.php">Products</a></li>
+    <li><a href="./settings.php">Settings</a></li>
+    <li><a href="./about.php">About</a></li>
+    <li><a href="./inbox.php">Messages</a></li>
 
   </ul>
 
