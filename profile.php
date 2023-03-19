@@ -13,13 +13,17 @@ $default = './assets/blank-profile.png';
     <li><a href="./settings.php">Settings</a></li>
     <li><a href="./about.php">About</a></li>
     <li><a href="./inbox.php">Messages</a></li>
+    <?php if(isset($_SESSION['type']) && $_SESSION['type']==="admin"){
+            echo '<li><a href="./creation.php">Submit an Idea</a></li>';
+          }
+      ?>
 
   </ul>
 
   <!-- Basically all this does is a bunch of if/else checks to dynamically set stuff based on if it is or isn't there -->
   <div class="profile">
     <div class="profile-head">
-      <div class="avatar"><img src="<?php if(isset($_SESSION['photo'])) { echo $_SESSION['photo']; } else { echo $default; }?>" alt="profile image for <?php echo $_SESSION['name']; ?>" srcset="" /></div>
+      <div class="avatar"><img src="<?php if(isset($_SESSION['photo'])) { echo $_SESSION['photo']; } else { echo './assets/blank-profile.png'; }?>" alt="profile image for <?php echo $_SESSION['name']; ?>" srcset="" /></div>
       <div class="profile-info">
         <div class="profile-name"><?php echo $_SESSION['name']; ?></div>
         <div class="profile-type"><?php if (isset($_SESSION['type']) == 'RM') {

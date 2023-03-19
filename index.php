@@ -11,7 +11,7 @@
     <a href="./about.php" class="about">About Us</a>
   </div>
   <div class="tile" id="tile4">
-    <a href="./contact.php" class="contact">Contact</a>
+    <a href="./contactus.php" class="contact">Contact</a>
   </div>
 </div>
 <?php include 'footer.php'; ?>

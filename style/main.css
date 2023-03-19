@@ -255,3 +255,74 @@ th {
 #settings-location {
     color: red;
 }
+
+/* CONTACT US PAGE
+Dante Esqueda */
+
+/*--------- contact us page ----------*/
+
+.contact-header{
+    height: 50vh;
+    width: 100%;
+    background-image: linear-gradient(rgba(4,9,30,0.7),rgba(4,9,30,0.7)), url(images/shakinghands.jpg);
+    background-position: center;
+    background-size: cover;
+    text-align: center;
+    color: #fff;
+}
+
+.contact-header h1{
+    margin-top: 10px;
+    font-size: 40px;
+}
+
+.row{
+    display: flex;
+}
+.location{
+    width: 80%;
+    margin: auto;
+    padding: 80px 0;
+}
+
+.location iframe{
+    width: 100%;
+}
+
+.contact-us{
+    width: 80%;
+    margin: auto;
+}
+
+.contact-col{
+    flex: 50%;
+    padding: 10px;
+    height: 250px;
+    margin-bottom: 10px;
+    margin-top: 20px;
+
+}
+
+.contact-col div{
+    display: flex;
+    align-items: center;
+    margin-bottom: 40px;
+}
+
+.contact-col div p{
+    padding: 0;
+}
+.contact-col div h2{
+    font-size:20px;
+    margin-bottom: 5px;
+    color: #555;
+    font-weight: 400;
+}
+.contact-col input, .contact-col textarea{
+    width: 100%;
+    padding: 15px;
+    margin-bottom: 17px;
+    outline: none;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+}

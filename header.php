@@ -45,7 +45,7 @@ function begin_session($mysqli, $login)
         $res = $stmt->get_result();
         $user = $res->fetch_assoc();
         // $user = mysqli_fetch_assoc($res);
-        var_dump($user);
+        // var_dump($user);
 
         // $phone = str_replace(' ', '', );
         // $phone = str_replace('-', '', $phone);

@@ -1,5 +1,5 @@
 <?php
 
 include 'header.php';
-begin_session($mysqli, "john.doe@example.com");
-header('Location: ./index.php');
+begin_session($mysqli, "admin@investing.com");
+header('Location: ./loginsuccess.php');

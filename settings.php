@@ -25,9 +25,7 @@ if (isset($_POST['submit'])) {
   }
   if($_POST['location']){
     $loc = $_POST['location'];
-    $sql = "UPDATE `users` SET location = '$loc' WHERE id=$id";
-    $stmt = $mysqli->prepare($sql);
-    $stmt->execute();
+    $mysqli->execute_query("UPDATE `users` SET location = '$loc' WHERE id=?", [$id]);
     $_SESSION["loc"] = $loc;
   }
   if($_POST['phone']){

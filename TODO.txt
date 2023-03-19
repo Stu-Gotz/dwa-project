@@ -1,0 +1,8 @@
+- ToDos:
+
+CONTACT US PAGE:
+Style the input area to be a bit nicer
+
+CREATION PAGE:
+Styling (pretty much going to be for every page probably going to stop putting it in)
+PHP to send ideas to database
