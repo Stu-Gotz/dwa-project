@@ -6,7 +6,7 @@ if(isset($_POST['submit'])){
     $subject = $_POST['subject'];
     $message = $_POST['message'];
     
-    $email_from = 'gamer691@gmail.com';
+    $email_from = '<an email you have access to>';
     
     $email_subject = 'New Form Submission';
     

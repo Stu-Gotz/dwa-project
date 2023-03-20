@@ -37,12 +37,7 @@ function begin_session($mysqli, $login)
     } else {
 
         //query the db
-        $sql = 'SELECT * FROM `users` WHERE email=?';
-        $stmt = $mysqli->prepare($sql);
-        $stmt->bind_param("s", $login);
-        $stmt->execute();
-
-        $res = $stmt->get_result();
+        $res = $mysqli->execute_query('SELECT * FROM `users` WHERE email=?', [$login]);   
         $user = $res->fetch_assoc();
         // $user = mysqli_fetch_assoc($res);
         // var_dump($user);
@@ -51,14 +46,14 @@ function begin_session($mysqli, $login)
         // $phone = str_replace('-', '', $phone);
         // $phone = str_replace('+', '', $phone);
 
-        $_SESSION['name'] = $user['first_name'] . ' ' . $user['last_name'];
-        $_SESSION['type'] = $user['type'];
-        $_SESSION['email'] = $user['email'];
-        $_SESSION['loc'] = $user['location'];
-        $_SESSION['photo'] = './assets/' . $user['photo'];
-        $_SESSION['phone'] = $user['phone'];
-        $_SESSION['id'] = $user['id'];
-        $_SESSION['password'] = $user['password'];
+        $_SESSION['name'] = htmlspecialchars($user['first_name'] . ' ' . $user['last_name']);
+        $_SESSION['type'] = htmlspecialchars($user['type']);
+        $_SESSION['email'] = htmlspecialchars($user['email']);
+        $_SESSION['loc'] = htmlspecialchars($user['location']);
+        $_SESSION['photo'] = htmlspecialchars('./assets/' . $user['photo']);
+        $_SESSION['phone'] = htmlspecialchars($user['phone']);
+        $_SESSION['id'] = htmlspecialchars($user['id']);
+        $_SESSION['password'] = htmlspecialchars($user['password']);
     }
 
     return $mysqli;

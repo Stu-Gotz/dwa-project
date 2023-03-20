@@ -1,33 +1,34 @@
 <?php include 'header.php';
-require_login();
-if (isset($_POST['submit'])) {
-    $inputs = [];
-    $errors = [];
+// require_login();
+// if (isset($_POST['submit'])) {
+//     $inputs = [];
+//     $errors = [];
 
-    [$inputs, $errors] = filter($_POST, [
-        'username' => 'string | required',
-        'password' => 'string | required'
-    ]);
+//     [$inputs, $errors] = filter($_POST, [
+//         'username' => 'string | required',
+//         'password' => 'string | required'
+//     ]);
 
-    if ($errors) {
-        redirect_with('login.php', ['errors' => $errors, 'inputs' => $inputs]);
-    }
+//     if ($errors) {
+//         redirect_with('login.php', ['errors' => $errors, 'inputs' => $inputs]);
+//     }
 
-    // if login fails
-    if (!login($inputs['username'], $inputs['password'])) {
+//     // if login fails
+//     if (!login($inputs['username'], $inputs['password'])) {
 
-        $errors['login'] = 'Invalid username or password';
+//         $errors['login'] = 'Invalid username or password';
 
-        redirect_with('login.php', [
-            'errors' => $errors,
-            'inputs' => $inputs
-        ]);
-    }
-}
+//         redirect_with('login.php', [
+//             'errors' => $errors,
+//             'inputs' => $inputs
+//         ]);
+//     }
+// }
 ?>
 <!-- <h1 style="font-family: sans-serif; color: darkgray;">You have logged in as John Doe.</h1> -->
-<!-- login form -->
-<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
+<!-- login form --> 
+<!-- "<?php echo $_SERVER['PHP_SELF']; ?>" -->
+<form action="autologin.php" method="POST">
     <h1>Login</h1>
     <div>
         <label for="username">Username:</label>
