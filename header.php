@@ -3,6 +3,9 @@
 //is only needed once. 
 session_start();
 
+//Pulling ourselves up by our Bootstrap
+require 'bootstrapinit.php';
+
 // We learned about this in class (I think), but session is a built-in function
 //that I don't really know deep down, but basically it allows access to the $_SESSION
 //variable which we can use throughout the page to inject data as an object with php (see later)
@@ -10,10 +13,12 @@ session_start();
 //******************
 //DEFAULT VALUE, DELETE LATER
 //*****************
-/*DELETE */ $password = 'password';
-/*DELETE */ $hashpass = password_hash($password, PASSWORD_DEFAULT);
+/*DELETE */
+$password = 'password';
+/*DELETE */
+$hashpass = password_hash($password, PASSWORD_DEFAULT);
 
-/*DELETE */// var_dump($hashpass);
+/*DELETE */ // var_dump($hashpass);
 
 //This needs to be replaced with real data
 $envs = [
@@ -37,7 +42,7 @@ function begin_session($mysqli, $login)
     } else {
 
         //query the db
-        $res = $mysqli->execute_query('SELECT * FROM `users` WHERE email=?', [$login]);   
+        $res = $mysqli->execute_query('SELECT * FROM `users` WHERE email=?', [$login]);
         $user = $res->fetch_assoc();
         // $user = mysqli_fetch_assoc($res);
         // var_dump($user);
@@ -58,11 +63,11 @@ function begin_session($mysqli, $login)
 
     return $mysqli;
 }
-var_dump($_SESSION);
+// var_dump($_SESSION);
+?>
 
-
-// after we do all the functions and set all the data, 
-echo '<!DOCTYPE html>
+<!-- after we do all the functions and set all the data, -->
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -91,14 +96,13 @@ echo '<!DOCTYPE html>
                         <path d="M11 39h7.5V26.5h11V39H37V19.5L24 9.75 11 19.5Zm-3 3V18L24 6l16 12v24H26.5V29.5h-5V42Zm16-17.65Z" />
                     </svg>
                 </a>
-                <h2 class="title">Smarter Investing Inc.</h2>' ?>
+                <h2 class="title">Smarter Investing Inc.</h2>
                 <!-- If they are logged in, it welcomes the user and gives a link to their profile. Note the $_SESSION variable and how that doesn't change -->
                 <?php if (isset($_SESSION["name"])) {
                     echo '<div class="login-area"><p style="margin-bottom:7px;">Welcome <a href="./profile.php">' . $_SESSION["name"] . '</p></a><a href="./logout.php" class="login"> Logout</a></div>';
                 } else {
                     echo '<a href="./login.php" class="login">Log In</a>';
                 } ?>
-            <?php echo '</div>
+            </div>
         </nav>
-    </header>';
-            ?>
+    </header>

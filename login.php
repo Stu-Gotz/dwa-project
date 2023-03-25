@@ -26,7 +26,7 @@
 // }
 ?>
 <!-- <h1 style="font-family: sans-serif; color: darkgray;">You have logged in as John Doe.</h1> -->
-<!-- login form --> 
+<!-- login form -->
 <!-- "<?php echo $_SERVER['PHP_SELF']; ?>" -->
 <form action="autologin.php" method="POST">
     <h1>Login</h1>
