@@ -59,6 +59,14 @@ a:hover {
     /* border-bottom: 1px double var(--color-dark) */
 }
 
+.btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    width: 100%;
+    height: 100%;
+}
+
 /* 
   Navbar Settings
 */

@@ -1,5 +1,6 @@
 <?php
 
 include 'header.php';
-begin_session($mysqli, "admin@web.site");
+// admin@investing.com john.doe@example.com
+begin_session($mysqli, "john.doe@example.com");
 header('Location: ./loginsuccess.php');

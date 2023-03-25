@@ -50,7 +50,8 @@ function begin_session($mysqli, $login)
         // $phone = str_replace(' ', '', );
         // $phone = str_replace('-', '', $phone);
         // $phone = str_replace('+', '', $phone);
-
+        
+        $_SESSION['userid'] = htmlspecialchars($user['id']);
         $_SESSION['name'] = htmlspecialchars($user['first_name'] . ' ' . $user['last_name']);
         $_SESSION['type'] = htmlspecialchars($user['type']);
         $_SESSION['email'] = htmlspecialchars($user['email']);
