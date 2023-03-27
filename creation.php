@@ -9,10 +9,10 @@ if (isset($_POST['submit'])) {
     $country = $_POST['country'];
     $price = $_POST['price'];
     $risk = $_POST['risk'];
-    $sql = "INSERT INTO `products` (prod_type, prod_style, company, country, val) 
-    VALUES ($ind,$risk,$name,$country,$price)";
+    $sql = "INSERT INTO `products` (`type`, `risk`, `name`, `country`, `closing_price`) 
+    VALUES ('$ind','$risk','$name','$country','$price')";
 
-    if ($mysqli->query($sql)) {
+    if ($mysqli->execute_query($sql)) {
         echo '<script type="text/javascript">alert("success");</script>';
     } else {
         echo '<script type="text/javascript">alert("failure");</script>';

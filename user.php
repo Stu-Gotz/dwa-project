@@ -8,7 +8,7 @@ var_dump($_SESSION['client']);
 $_SESSION['client']['name'] = $_SESSION['client']['first_name'] . ' ' . $_SESSION['client']['last_name'];
 $default = './assets/blank-profile.png';
 
-
+$sql = "";
 ?>
 <!--  alt="profile image for <?php echo $_SESSION['client']['name']; ?>" -->
 
