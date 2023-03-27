@@ -50,7 +50,7 @@ function begin_session($mysqli, $login)
         // $phone = str_replace(' ', '', );
         // $phone = str_replace('-', '', $phone);
         // $phone = str_replace('+', '', $phone);
-        
+
         $_SESSION['userid'] = htmlspecialchars($user['id']);
         $_SESSION['name'] = htmlspecialchars($user['first_name'] . ' ' . $user['last_name']);
         $_SESSION['type'] = htmlspecialchars($user['type']);
@@ -84,6 +84,8 @@ function begin_session($mysqli, $login)
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <!-- Custom css -->
     <link rel="stylesheet" href="./style/main.css">
+    <!-- jQuery  -->
+    <script src="https://code.jquery.com/jquery-3.6.4.js" integrity="sha256-a9jBBRygX1Bh5lt8GZjXDzyOB+bWve9EiO7tROUtj/E=" crossorigin="anonymous"></script>
 </head>
 
 <body>
