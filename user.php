@@ -40,6 +40,12 @@ $sql = "";
                 <div class="profile-email"><?php if (isset($user['email'])) {
                                                 echo '<a href="mailto:' . $user['email'] . '">' . $user['email'] . '</a>';
                                             } ?></div>
+                <div class="rm"><?php if (isset($user['type']) && $user['type'] === 'client') {
+                                    $sql = "SELECT users.id, users.first_name, users.last_name, users.email FROM `users` INNER JOIN client_rm ON client_id = ? AND users.id = client_rm.rm_id";
+                                    $res = $mysqli->execute_query($sql, [$user['id']]);
+                                    $rm = $res->fetch_assoc(MYSQLI_ASSOC)[0];
+                                    echo '<a href="./user.php?u="' . $rm['email'] . '">' . $rm['first_name'] . ' ' . $rm['last_name'] . '</a>';
+                                } ?></div>
             </div>
         </div>
     </div>

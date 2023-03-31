@@ -1,6 +1,11 @@
 <?php
 include 'header.php';
+// TODO
 
+/* 
+1 ACCEPT OR DECLINE INVESTMENT IDEA @ TABLE
+
+*/
 //contains the blank avatar image
 $default = './assets/blank-profile.png';
 
@@ -11,9 +16,9 @@ if (isset($_SESSION['type']) && $_SESSION['type'] === 'rm') {
   $_SESSION['clients'] = $res->fetch_all(MYSQLI_ASSOC);
 }
 
-if(isset($_SESSION['type']) && $_SESSION['type'] === 'client'){
-  $sql = "SELECT product.type, product.name, product.country, product.closing_price, product.abbr, product.exchange, product.id 
-  FROM `product` INNER JOIN prod_client ON client_id = ? AND product.id = prod_client.prod_id";
+if (isset($_SESSION['type']) && $_SESSION['type'] === 'client') {
+  $sql = "SELECT products.type, products.name, products.country, products.closing_price, products.abbr, products.exchange, products.id 
+  FROM `products` INNER JOIN client_prod ON client_id = ? AND products.id = client_prod.prod_id";
   $res = $mysqli->execute_query($sql, [$_SESSION['userid']]);
   $_SESSION['userprods'] = $res->fetch_all(MYSQLI_ASSOC);
 }

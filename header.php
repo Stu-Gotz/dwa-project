@@ -3,9 +3,6 @@
 //is only needed once. 
 session_start();
 
-//Pulling ourselves up by our Bootstrap
-require 'bootstrapinit.php';
-
 // We learned about this in class (I think), but session is a built-in function
 //that I don't really know deep down, but basically it allows access to the $_SESSION
 //variable which we can use throughout the page to inject data as an object with php (see later)
