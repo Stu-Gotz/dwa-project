@@ -10,24 +10,24 @@ include 'header.php';
 $default = './assets/blank-profile.png';
 
 if (isset($_SESSION['type']) && $_SESSION['type'] === 'rm') {
-  $sql = "SELECT users.id, users.email, users.first_name, users.last_name, users.location , users.phone
-          FROM `users` INNER JOIN client_rm ON rm_id = ? AND users.id = client_rm.client_id";
+  $sql = "SELECT users.id, users.email, users.first_name, users.last_name, 
+  users.location , users.phone FROM `users` INNER JOIN client_rm ON 
+  rm_id = ? AND users.id = client_rm.client_id";
   $res = $mysqli->execute_query($sql, [$_SESSION['userid']]);
   $_SESSION['clients'] = $res->fetch_all(MYSQLI_ASSOC);
 }
 
 if (isset($_SESSION['type']) && $_SESSION['type'] === 'client') {
   $sql = 'SELECT products.type, products.name, products.country, products.closing_price, 
-  products.abbr, products.exchange, products.id FROM `products` INNER JOIN 
-  client_prod ON client_id = ? AND products.id = client_prod.prod_id';
+  products.abbr, products.exchange, products.id, products.status FROM `products` INNER JOIN 
+  `client_prod` ON client_id = ? AND products.id = client_prod.prod_id';
   $res = $mysqli->execute_query($sql, [$_SESSION['userid']]);
   $_SESSION['userprods'] = $res->fetch_all(MYSQLI_ASSOC);
 }
 
 if (isset($_SESSION['type']) && $_SESSION['type'] === 'admin') {
-  $sql = 'SELECT  products.name, products.id, products.abbr, FROM `products` 
-  INNER JOIN client_prod ON client_id = ? AND products.id = client_prod.prod_id';
-  $res = $mysqli->execute_query($sql, [$_SESSION['userid']]);
+  $sql = "SELECT products.name, products.id, products.abbr, products.status FROM `products`;";
+  $res = $mysqli->execute_query($sql);
   $_SESSION['userprods'] = $res->fetch_all(MYSQLI_ASSOC);
 }
 
@@ -42,38 +42,25 @@ if (isset($_POST['delete'])) {
 
   header("Location: profile.php");
 }
+if (isset($POST['deny'])){
+  header("Location: profile.php");
+}
+
+function determineStatus($product, $userid, $mysqli){
+  $sql = "SELECT * FROM `client_prod` WHERE client_prod.prod_id = ? AND client_prod.client_id = ?";
+  if($mysqli->execute_query($sql, [$product, $userid])){
+    return 'accepted';
+  } else {
+    return 'pending';
+  };
+}
 ?>
 
 <div class="profile-page">
-  <?php include 'sidebar.php'; ?>
+  <?php include './components/sidebar.php' ?>
   <!-- Basically all this does is a bunch of if/else checks to dynamically set stuff based on if it is or isn't there -->
   <div class="profile">
-    <div class="profile-head">
-      <div class="avatar"><img src="<?php if (isset($_SESSION['photo'])) {
-                                      echo $_SESSION['photo'];
-                                    } else {
-                                      echo $default;
-                                    } ?>" alt="profile image for <?php echo $_SESSION['name']; ?>" srcset="" /></div>
-      <div class="profile-info">
-        <div class="profile-name"><?php echo $_SESSION['name']; ?></div>
-        <div class="profile-type"><?php if (isset($_SESSION['type']) && $_SESSION['type'] === 'rm') {
-                                    echo 'Relation Manager';
-                                  } else if (isset($_SESSION['type']) && $_SESSION['type'] === 'client') {
-                                    echo 'Client';
-                                  } else if (isset($_SESSION['type']) && $_SESSION['type'] === 'admin') {
-                                    echo 'Administrator';
-                                  } ?></div>
-        <div class="profile-phone"><?php if (isset($_SESSION['phone'])) {
-                                      echo $_SESSION['phone'];
-                                    } ?></div>
-        <div class="profile-loc"><?php if (isset($_SESSION['loc'])) {
-                                    echo $_SESSION['loc'];
-                                  } ?></div>
-        <div class="profile-email"><?php if (isset($_SESSION['email'])) {
-                                      echo '<a href="mailto:' . $_SESSION['email'] . '">' . $_SESSION['email'] . '</a>';
-                                    } ?></div>
-      </div>
-    </div>
+    <?php include './components/profilehead.php' ?>
     <?php if ($_SESSION['type'] === 'rm') : ?>
       <div class="table-area">
         <table class="client-table">
@@ -110,9 +97,9 @@ if (isset($_POST['delete'])) {
               <th>Price</th>
               <th>Type</th>
               <th>Country</th>
-              <th>exchange</th>
-              <th>ACCEPT</th>
-              <th>DENY</th>
+              <th>Exchange</th>
+              <th>Accept</th>
+              <th>Deny</th>
             </tr>
           </thead>
           <tbody class="table-data">
@@ -120,14 +107,15 @@ if (isset($_POST['delete'])) {
             // NEED TO FIGURE OUT HOW TO NAVIGATE TO PAGE AND ACCESS USER DATA
             // COOKIES DOESNT SEEM SUFFICIENT
             for ($i = 0; $i < count($_SESSION['userprods']); $i++) {
-              echo '<tr style="background-color: ' . ($_SESSION['userprods'][$i]['approved'] === 1) ? 'lightgreen' : 'white';'>
-            <td><a href="./product.php?prod=' . $_SESSION['userprods'][$i]['name'] . '">' . $_SESSION['userprods'][$i]['abbr'] . '</a></td>
-            <td><a href="./product.php?prod=' . $_SESSION['userprods'][$i]['name'] . '">' . $_SESSION['userprods'][$i]['name'] . '</a></td>
+              echo '<tr class="' . determineStatus($_SESSION['userprods'][$i]['id'], $_SESSION['userid'], $mysqli) . '">
+            <td><a href="./product.php?prod=' . htmlspecialchars($_SESSION['userprods'][$i]['name']) . '">' . $_SESSION['userprods'][$i]['abbr'] . '</a></td>
+            <td><a href="./product.php?prod=' . htmlspecialchars($_SESSION['userprods'][$i]['name']) . '">' . $_SESSION['userprods'][$i]['name'] . '</a></td>
             <td>' . $_SESSION['userprods'][$i]['closing_price'] . '</td>
             <td>' . $_SESSION['userprods'][$i]['type'] . '</td>
             <td>' . $_SESSION['userprods'][$i]['country'] . '</td>
             <td>' . $_SESSION['userprods'][$i]['exchange'] . '</td>
-            <td> <form action="' . $_SERVER['PHP_SELF'] . '?id=' . $_SESSION['userprods'][$i]['id'] . '&row=' . $_SESSION['userprods'][$i] . '" method="POST"><input="submit" name="accept" value="Approve"></form></td>
+            <td> <form action="' . $_SERVER['PHP_SELF'] . '?id=' . htmlspecialchars($_SESSION['userprods'][$i]['id']) . '&row=' . $i. '" method="POST"><button class="btn btn-accept" type="submit" name="accept">Approve</button></form></td>
+            <td> <form action="' . $_SERVER['PHP_SELF'] . '?id=' . htmlspecialchars($_SESSION['userprods'][$i]['id']) . '&row=' . $i. '" method="POST"><button class="btn btn-del" type="submit" name="deny">Deny</button</form></td>
           </tr>';
             }
             ?>
@@ -140,10 +128,10 @@ if (isset($_POST['delete'])) {
         <table class="client-table">
           <thead>
             <tr>
+              <th>Product Abbreviation</th>
               <th>Product Name</th>
-              <th>Client Email</th>
-              <th>Client Location</th>
-              <th>Client Phone</th>
+              <th>Status</th>
+              <th>Delete</th>
             </tr>
           </thead>
           <tbody class="table-data">
@@ -154,10 +142,8 @@ if (isset($_POST['delete'])) {
               echo '<tr>
             <td><a href="./product.php?prod=' . $_SESSION['userprods'][$i]['name'] . '">' . $_SESSION['userprods'][$i]['abbr'] . '</a></td>
             <td><a href="./product.php?prod=' . $_SESSION['userprods'][$i]['name'] . '">' . $_SESSION['userprods'][$i]['name'] . '</a></td>
-            <td>' . $_SESSION['userprods'][$i]['closing_price'] . '</td>
-            <td>' . $_SESSION['userprods'][$i]['type'] . '</td>
-            <td>' . $_SESSION['userprods'][$i]['country'] . '</td>
-            <td>' . $_SESSION['userprods'][$i]['exchange'] . '</td>
+            <td class="' . $_SESSION['userprods'][$i]['status'] .  '">' . $_SESSION['userprods'][$i]['status']. '</td>
+            <td><form action="' . $_SERVER['PHP_SELF'] . '" method="POST?id="' . $_SESSION['userprods'][$i]['name'] .'&row="' . $i . '"><button class="btn-del" type="submit" name="delete">Delete</button></form></td>
           </tr>';
             }
             ?>
