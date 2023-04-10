@@ -59,13 +59,14 @@ if (isset($_GET['email'])){
     <?php if(isset($user['type']) && $user['type'] === 'rm') :?>
         <table>
         <thead>
-            <th>User Image</th>
+            <th>Image</th>
             <th>Client Name</th>
         </thead>
         <tbody>
             <?php
-                $sql_ = 'SELECT *FROM `users` INNER JOIN ON rm_id = ? AND 
-                users.id = client_rm.client_id';
+                $sql_ = 'SELECT users.id, users.first_name, users.last_name, users.photo
+                FROM `users` INNER JOIN `client_rm` ON rm_id = ? 
+                AND users.id = client_rm.client_id';
                 $res_ = $mysqli->execute_query($sql_, [$user['id']]);
                 $client_list = $res_->fetch_all(MYSQLI_ASSOC);
 

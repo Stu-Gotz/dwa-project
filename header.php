@@ -98,11 +98,11 @@ function begin_session($mysqli, $login)
                 </a>
                 <h2 class="title">Smarter Investing Inc.</h2>
                 <!-- If they are logged in, it welcomes the user and gives a link to their profile. Note the $_SESSION variable and how that doesn't change -->
-                <?php if (isset($_SESSION["name"])) {
-                    echo '<div class="login-area"><p style="margin-bottom:7px;">Welcome <a href="./profile.php">' . $_SESSION["name"] . '</p></a><a href="./logout.php" class="login"> Logout</a></div>';
+                <div class="login-area"><?php if (isset($_SESSION["name"])) {
+                    echo '<p style="margin-bottom:7px;">Welcome <a href="./profile.php">' . $_SESSION["name"] . '</p></a><a href="./logout.php" class="login"> Logout</a>';
                 } else {
                     echo '<a href="./login.php" class="login">Log In</a>';
-                } ?>
+                } ?></div>
             </div>
         </nav>
     </header>
