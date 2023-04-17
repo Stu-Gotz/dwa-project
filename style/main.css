@@ -71,28 +71,37 @@ a:hover {
 }
 
 /* BUTTONS */
-.btn {
+.btn,
+.btn:hover,
+.btn::before,
+.btn::after {
     display: inline-block;
-    border: var(--basic-border);
+    background: none;
     font-weight: 500;
     border-radius: 5px;
     font-size: 1.5rem;
     padding: 2px 5px;
 }
 
-.btn-del {
+.btn-del,
+.btn-del:hover,
+.btn-del::before,
+.btn-del::after {
+    border: inherit;
     background-color: lightcoral;
 }
 
-.btn-accept {
+.btn-accept,
+.btn-accept:hover,
+.btn-accept::before,
+.btn-accept::after,
+.btn-submit,
+.btn-submit:hover,
+.btn-submit::before,
+.btn-submit::after {
+    border: inherit;
     background-color: lightgreen;
 }
-
-
-.btn-submit { 
-    background-color: lightblue;
-}
-
 /* 
   Navbar Settings
 */

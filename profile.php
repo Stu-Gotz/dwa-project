@@ -139,7 +139,7 @@ function determineStatus($product, $userid, $mysqli){
             <td><a href="./product.php?prod=' . $_SESSION['userprods'][$i]['id'] . '">' . $_SESSION['userprods'][$i]['abbr'] . '</a></td>
             <td><a href="./product.php?prod=' . $_SESSION['userprods'][$i]['id'] . '">' . $_SESSION['userprods'][$i]['name'] . '</a></td>
             <td class="' . $_SESSION['userprods'][$i]['status'] .  '">' . $_SESSION['userprods'][$i]['status']. '</td>
-            <td><form action="' . $_SERVER['PHP_SELF'] . '" method="POST?id="' . $_SESSION['userprods'][$i]['name'] .'&row="' . $i . '"><button class="btn-del" type="submit" name="delete">Delete</button></form></td>
+            <td><form action="' . $_SERVER['PHP_SELF'] . '" method="POST?id="' . $_SESSION['userprods'][$i]['name'] .'&row="' . $i . '"><button class="btn btn-del" type="submit" name="delete">Delete</button></form></td>
           </tr>';
             }
             ?>

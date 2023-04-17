@@ -20,7 +20,7 @@ $prod = $res->fetch_all(MYSQLI_ASSOC)[0];
 
 $sql_ = "SELECT client_id FROM `client_prod` WHERE prod_id=?";
 $res_ = $mysqli->execute_query($sql_, [$product]);
-$users = $res->fetch_all(MYSQLI_ASSOC);
+$users = $res_->fetch_all(MYSQLI_ASSOC);
 
 var_dump($users);
 $invested_users = array();
@@ -28,7 +28,7 @@ $invested_users = array();
 for($u=0; $u<count($users); $u++){
     $usersql = "SELECT users.id, users.first_name, users.last_name, users.email FROM `users`
     WHERE id=?";
-    $results = $mysqli->execute_query($usersql, $users[$u]['client_id']);
+    $results = $mysqli->execute_query($usersql, [$users[$u]['client_id']]);
     $user = $results->fetch_all(MYSQLI_ASSOC)[0];
     array_push($invested_users, $user);
 }
@@ -54,18 +54,18 @@ for($u=0; $u<count($users); $u++){
         <?php if(count($invested_users) === 0){
             echo 'Nobody has invested in this product yet.';
         } else {
-            echo 'The following clients have invested in this product: ';
+            echo 'The following clients have invested in this product: <br>';
         } ?>
         <?php for($i=0; $i<count($invested_users); $i++) :?>
         
-        <?php echo '<a href="./users.php?email=' .  $invested_users[$i]['email']. '">' . $invested_users[$i]['first_name'] . ' ' . $invested_users[$i]['last_name'] . '</a>'?>
+        <?php echo '<a href="./users.php?email=' .  $invested_users[$i]['email']. '">' . $invested_users[$i]['first_name'] . ' ' . $invested_users[$i]['last_name'] . '</a><br>'?>
         <?php endfor ?>
         
     </div>
     <?php if(isset($_SESSION['type']) && $_SESSION['type'] === 'admin') :?>
     <div class="admin-controls">
         <form action="<?php echo $_SERVER['PHP_SELF'];?>" method="POST">
-        <input class="btn-del" type="submit" name="delete" value="Delete">
+        <button class="btn btn-del" type="submit" name="delete">Delete This Product</button>
         </form>
     </div>
     <?php endif ?>

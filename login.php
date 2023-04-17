@@ -42,7 +42,7 @@
             <small><?= $errors['password'] ?? '' ?></small>
         </div>
         <div class="login-submit">
-            <input name="submit" value="Log In" type="submit" />
+            <button class="btn btn-submit" name="submit" type="submit">Log In</button>
             <!-- client can click register if their account is not registered to login -->
             <a href="register.php">Register</a>
         </div>
