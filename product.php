@@ -25,10 +25,10 @@ $users = $res->fetch_all(MYSQLI_ASSOC);
 var_dump($users);
 $invested_users = array();
 
-for($u=0; $u<count($users);$u++){
+for($u=0; $u<count($users); $u++){
     $usersql = "SELECT users.id, users.first_name, users.last_name, users.email FROM `users`
     WHERE id=?";
-    $results = $mysqli->execute_query($usersql, $users[$u]['user_id']);
+    $results = $mysqli->execute_query($usersql, $users[$u]['client_id']);
     $user = $results->fetch_all(MYSQLI_ASSOC)[0];
     array_push($invested_users, $user);
 }
