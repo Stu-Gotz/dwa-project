@@ -2,7 +2,7 @@
 
 ?>
 
-<div>
+<div class="investing-wrapper">
     <div class="strategy">
         <h1 class="investing-header">Our Strategy</h1>
         <p class="investing-text">We help customers invest with a strategy that best suits their needs. <br> Our Relation Managers are especially trained to create bespoke investment opportunities and strategies that are tailored to your requirements, needs and preferences.</p>

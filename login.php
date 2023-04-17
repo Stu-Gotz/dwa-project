@@ -28,24 +28,28 @@
 <!-- <h1 style="font-family: sans-serif; color: darkgray;">You have logged in as John Doe.</h1> -->
 <!-- login form -->
 <!-- "<?php echo $_SERVER['PHP_SELF']; ?>" -->
-<form action="autologin.php" method="POST">
-    <h1>Login</h1>
-    <div>
-        <label for="username">Username:</label>
-        <input type="text" name="username" id="username" value="<?= $inputs['username'] ?? '' ?>">
-        <small><?= $errors['username'] ?? '' ?></small>
-    </div>
-    <div>
-        <label for="password">Password:</label>
-        <input type="password" name="password" id="password">
-        <small><?= $errors['password'] ?? '' ?></small>
-    </div>
-    <div>
-        <input name="submit" value="Log In" type="submit" />
-        <!-- client can click register if their account is not registered to login -->
-        <a href="register.php">Register</a>
-    </div>
-</form>
+<div class="login-wrapper">
+    <form action="autologin.php" method="POST">
+        <h1>Login</h1>
+        <div class="login-user">
+            <label for="username">Username:</label>
+            <input type="text" name="username" id="username" value="<?= $inputs['username'] ?? '' ?>">
+            <small><?= $errors['username'] ?? '' ?></small>
+        </div>
+        <div class="login-password">
+            <label for="password">Password:</label>
+            <input type="password" name="password" id="password">
+            <small><?= $errors['password'] ?? '' ?></small>
+        </div>
+        <div class="login-submit">
+            <input name="submit" value="Log In" type="submit" />
+            <!-- client can click register if their account is not registered to login -->
+            <a href="register.php">Register</a>
+        </div>
+    </form>
+    <p>Interested in investing with us? <a href="register.php">Register here!</a></p>
+</div>
 
-<p>Interested in investing with us? <a href="register.php">Register here!</a></p>
+
+
 <?php include 'footer.php'; ?>

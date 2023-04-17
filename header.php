@@ -18,12 +18,8 @@ $hashpass = password_hash($password, PASSWORD_DEFAULT);
 /*DELETE */ // var_dump($hashpass);
 
 //This needs to be replaced with real data
-$envs = [
-    'DB_USER' => 'root',
-    'DB_PASS' => '',
-    'DB_HOST' => 'localhost',
-    'DB_NAME' => 'dwa-db',
-];
+$envs = include './env.php';
+
 $mysqli = new mysqli($envs['DB_HOST'], $envs['DB_USER'], $envs['DB_PASS'], $envs['DB_NAME']);
 
 //This will be used after zero-ing out a session (after a logout, for instance)

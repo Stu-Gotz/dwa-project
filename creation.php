@@ -1,6 +1,9 @@
 <?php include 'header.php';
 
-// THIS DOES NOt WORK
+//keep pages private from non-registered users
+if(!isset($_SESSION['userid'])){
+    header('Location: ./login.php');
+  }
 
 if (isset($_POST['submit'])) {
     $abbr = htmlspecialchars($_POST['abbr']);

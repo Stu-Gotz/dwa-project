@@ -1,5 +1,10 @@
 <?php include 'header.php';
 
+//keep pages private from non-registered users
+if(!isset($_SESSION['userid'])){
+  header('Location: ./login.php');
+}
+
 if (isset($_POST['submit'])) {
 
   $id = $_SESSION['id'];

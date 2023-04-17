@@ -1,8 +1,6 @@
 <?php 
 include 'header.php';
 
-
-
 if(isset($_SESSION['name'])){
     echo '<h2>You have successfully logged-in! You will be redirected to your homepage in <span id="counter">5</span> seconds...</h2>
     <br>

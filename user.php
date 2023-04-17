@@ -1,4 +1,10 @@
 <?php include 'header.php';
+
+//keep pages private from non-registered users
+if(!isset($_SESSION['userid'])){
+    header('Location: ./login.php');
+  }
+
 if (isset($_GET['email'])){
     $email = htmlspecialchars($_GET['email']);
     $sql = "SELECT * FROM `users` WHERE email = ?";
@@ -42,7 +48,7 @@ if (isset($_GET['email'])){
                     for($i=0; $i<count($product_list); $i++){
                         echo '<tr>
                         <td>' . $product_list[$i]['abbr'] . '</td>
-                        <td>' . $product_list[$i]['name'] . '</td>
+                        <td><a href="./product.php?prod=' .  $product_list[$i]['id']. '">' . $product_list[$i]['name'] . '</a></td>
                         <td>' . $product_list[$i]['closing_price'] . '</td>
                         <td>' . $product_list[$i]['country'] . '</td>
                         <td>' . $product_list[$i]['sector1'] . '</td>
