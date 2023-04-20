@@ -29,10 +29,9 @@ if(isset($_POST['submit'])){
 
 
 
-<section class="contact-us">
-
+<div class="contact-us">
     <div class="row">
-        <div class="contact-col">
+        <div class="contact-col" id="contact-info">
             <div>
                 <i class="fa fa-home"></i>
                 <span>
@@ -55,22 +54,36 @@ if(isset($_POST['submit'])){
                 </span>
             </div>
         </div>
-        <div class="contact-col">
+        <div class="contact-col" id="contact-form">
             <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
             <!-- TODO: LABELS -->
+            <div>
+                <label for="name">Name: </label>
                 <input type="text" name="name" placeholder="Enter your name" required>
+            </div>
+                <div>
+                <label for="email">Email: </label>
                 <input type="email" name="email" placeholder="Enter email address" required>
+                </div>
+                <div>
+                <label for="subject">Subject: </label>
                 <input type="subject" name="subject" placeholder="Enter message subject" required>
+                </div>
+                <div class="msg-body">
+                <label for="message">How can we help?</label>
                 <textarea row="8" name="message" placeholder ="Message" required></textarea>
-                <input type="submit" class="hero-btn red-btn" value="Send Message" name="submit">
+                </div>
+                
+                <button type="submit" class="btn btn-submit" name="submit">Send Message</button>
             </form>
         </div>
     </div>
-</section>
-<section class="location">
-    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2445.20349554435!2d0.13226225087864682!3d52.203349367301215!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47d8718baab59a11%3A0x482b8c6a0d818d1c!2sAnglia%20Ruskin%20University%20Cambridge%20Campus!5e0!3m2!1sen!2suk!4v1678227913063!5m2!1sen!2suk" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-</section>
+    <div class="location">
+        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2445.20349554435!2d0.13226225087864682!3d52.203349367301215!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47d8718baab59a11%3A0x482b8c6a0d818d1c!2sAnglia%20Ruskin%20University%20Cambridge%20Campus!5e0!3m2!1sen!2suk!4v1678227913063!5m2!1sen!2suk" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+    </div>
+</div>
+
 </body>
 </html>
 
-<!------------Idea Creator Page------------>
+<?php include './footer.php'; ?>

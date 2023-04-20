@@ -45,6 +45,9 @@ if (isset($_POST['submit'])) {
 
 ?>
 <h2 id="invest-heading">Submit a New Investment Opportunity</h2>
+<div class="creation-wrapper">
+    
+</div>
 <form id="creation-form" action="<?php echo $_SERVER['PHP_SELF'] ?>" method="POST">
     <div class="fields">
         <div class="invest-form-area" id="invest-abbr">

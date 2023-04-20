@@ -1,0 +1,53 @@
+/* Creation Page */
+
+#creation-form {
+    width: 60%;
+    display: flex;
+    flex-direction: column;
+    flex: 2;
+}
+
+.fields {
+    display: grid;
+    grid-template-columns: repeat(3, 33%);
+    grid-template-rows: 1fr;
+
+}
+.invest-form-area {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+    justify-content: space-between;
+    margin-left: 10px;
+    margin-right: 5px;
+}
+
+.invest-text {
+   margin-left: auto;
+}
+
+#invest-submit {
+    width: 20%;
+    padding: 15px;
+    align-self: center;
+}
+
+#invest-heading {
+    font-size: 4rem;
+    margin-bottom: 30px;
+    font-weight: 600;
+    border-bottom: thick double black;
+}
+
+.pending {
+    background-color: lightgoldenrodyellow;
+}
+
+.accepted {
+    background-color: lightgreen;
+}
+
+.rejected {
+    background-color: lightcoral;
+}

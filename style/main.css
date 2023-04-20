@@ -1,3 +1,10 @@
+@import 'nav.css';
+@import 'investing.css';
+@import 'about.css';
+@import 'profile.css';
+@import 'products.css';
+@import 'creation.css';
+@import 'contact.css';
 /* 
 colours obtained from colorhunt.co 
 https: //www.colorhunt.co/palette/f8ede3dfd3c3d0b8a885586f
@@ -10,13 +17,13 @@ https: //www.colorhunt.co/palette/f8ede3dfd3c3d0b8a885586f
     /* Main Primary colour */
     --color-primary: #F8EDE3;
     /* Accent colour */
-    --color-accent: #DFD3C3;
+    --color-accent: #dcedc1;
     /* Secondary Colour*/
-    --color-secondary: #ffaaa5;
+    --color-secondary: #b4c8ea;
     /* Dark colour */
-    --color-dark: #85586F;
+    --color-dark: #49796b;
     /* color for links */
-    --color-link: #7b2953;
+    --color-link: #317873;
     /* Page Width */
     --page-width: 1280px;
 
@@ -81,13 +88,13 @@ a:hover {
     border-radius: 5px;
     font-size: 1.5rem;
     padding: 2px 5px;
+    border: 2px solid black;
 }
 
 .btn-del,
 .btn-del:hover,
 .btn-del::before,
 .btn-del::after {
-    border: inherit;
     background-color: lightcoral;
 }
 
@@ -99,60 +106,9 @@ a:hover {
 .btn-submit:hover,
 .btn-submit::before,
 .btn-submit::after {
-    border: inherit;
     background-color: lightgreen;
 }
-/* 
-  Navbar Settings
-*/
-.heading {
-    width: 100vw;
-}
 
-.navbar {
-    height: 6rem;
-    /* width: var(--page-width); */
-    justify-content: space-evenly;
-    align-items: center;
-    background-color: var(--bg-accent);
-    color: var(--color-dark);
-    margin-bottom: 2rem;
-    padding: 0 2rem;
-    border-bottom-left-radius: 1rem;
-    border-bottom-right-radius: 1rem;
-}
-
-.login {
-    margin-right: 6px;
-}
-
-.navcontainer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex: 1;
-}
-
-.home {
-    margin-left: 20%;
-}
-
-.home-icon {
-    fill: var(--color-link);
-}
-
-.login-area {
-    margin-right: 20%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    font-size: 1.7rem;
-
-}
-
-.title {
-    font-size: 4rem;
-}
 
 .content {
     display: grid;
@@ -170,6 +126,7 @@ a:hover {
     align-items: center;
     justify-content: center;
     border: 2px solid black;
+    border-radius: 10px;
     font-size: 3rem;
     font-weight: 500;
     text-shadow: var(--color-secondary) 1px 0px 3px;
@@ -195,25 +152,7 @@ a:hover {
     background-image: url("../images/pexels-pixabay-534216.jpg");
 }
 
-.investing-wrapper {
-    display: flex;
-    flex-direction: column;
-    flex: 2;
-}
 
-.investing-header {
-    color: var(--color-dark);
-    border-bottom: var(--basic-border);
-    border-left: var(--basic-border);
-    padding-left: 15px;
-    padding-bottom: 5px;
-    margin-bottom: 10px;
-}
-
-.investing-text {
-    font-weight: 500;
-    font-size: 1.4rem;
-}
 
 .login-wrapper {
     display: flex;
@@ -238,6 +177,8 @@ a:hover {
     width: 100vw;
 }
 
+
+
 table {
     border-collapse: separate;
 }
@@ -254,77 +195,7 @@ th {
     text-align: center;
 }
 
-/* Profile page settings */
-.avatar>img {
-    height: 80px;
-    border-radius: 50%;
-    border: 2px solid black;
-}
 
-.profile-name {
-    font-size: 3rem;
-    font-weight: 600;
-    opacity: .8;
-}
-
-.profile-info {
-    margin-left: 4rem;
-}
-
-.sidebar-menu {
-    display: flex;
-    flex-direction: column;
-    width: 15%;
-    height: fit-content;
-    margin: 0px 20px 0px 0px;
-    padding: 10px 1px 10px;
-    /* background: var(--color-accent); */
-    align-self: flex-start;
-    font-size: 2rem;
-    font-weight: 500;
-    border-left: thick double black;
-    justify-self: flex-start;
-}
-
-.sidebar-menu>* {
-    border-bottom: 1px dashed black;
-}
-
-.sidebar-menu>*:not(:last-child) {
-    margin-bottom: 1rem;
-}
-
-.profile-head {
-    display: flex;
-    margin-bottom: 3rem;
-}
-
-.profile-page {
-    display: flex;
-    flex: 2;
-    justify-content: space-evenly;
-    width: 80%;
-    height: calc(100vh-7rem);
-}
-
-.profile {
-    display: flex;
-    flex-direction: column;
-    width: calc(var(--page-width)-400px);
-    margin-left: 4rem;
-    justify-self:flex-end;
-    
-}
-
-.user-page {
-    display: flex;
-    flex: 2;
-    flex-direction: column;
-    width: 100%;
-    align-items: center;
-    justify-content: flex-start;
-    
-}
 /* Settings Page */
 
 .settings-form {
@@ -345,165 +216,3 @@ th {
     color: red;
 }
 
-/* CONTACT US PAGE
-Dante Esqueda */
-
-/*--------- contact us page ----------*/
-
-.contact-header{
-    height: 50vh;
-    width: 100%;
-    background-image: linear-gradient(rgba(4,9,30,0.7),rgba(4,9,30,0.7)), url(images/shakinghands.jpg);
-    background-position: center;
-    background-size: cover;
-    text-align: center;
-    color: #fff;
-}
-
-.contact-header h1{
-    margin-top: 10px;
-    font-size: 40px;
-}
-
-.row{
-    display: flex;
-}
-.location{
-    width: 80%;
-    margin: auto;
-    padding: 80px 0;
-}
-
-.location iframe{
-    width: 100%;
-}
-
-.contact-us{
-    width: 80%;
-    margin: auto;
-}
-
-.contact-col{
-    flex: 50%;
-    padding: 10px;
-    height: 250px;
-    margin-bottom: 10px;
-    margin-top: 20px;
-
-}
-
-.contact-col div{
-    display: flex;
-    align-items: center;
-    margin-bottom: 40px;
-}
-
-.contact-col div p{
-    padding: 0;
-}
-.contact-col div h2{
-    font-size:20px;
-    margin-bottom: 5px;
-    color: #555;
-    font-weight: 400;
-}
-.contact-col input, .contact-col textarea{
-    width: 100%;
-    padding: 15px;
-    margin-bottom: 17px;
-    outline: none;
-    border: 1px solid #ccc;
-    box-sizing: border-box;
-}
-
-/* Creation Page */
-
-#creation-form {
-    width: 60%;
-    display: flex;
-    flex-direction: column;
-}
-
-.fields {
-
-    display: grid;
-    grid-template-columns: repeat(3, 33%);
-    grid-template-rows: 1fr;
-
-}
-.invest-form-area {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    margin-bottom: 10px;
-    justify-content: space-between;
-    margin-left: 10px;
-    margin-right: 5px;
-}
-
-.invest-text {
-   margin-left: auto;
-}
-
-#invest-submit {
-    width: 20%;
-    padding: 15px;
-    align-self: center;
-}
-
-#invest-heading {
-    font-size: 4rem;
-    margin-bottom: 30px;
-    font-weight: 600;
-    border-bottom: thick double black;
-}
-
-.pending {
-    background-color: lightgoldenrodyellow;
-}
-
-.accepted {
-    background-color: lightgreen;
-}
-
-.rejected {
-    background-color: lightcoral;
-}
-
-/* PRODUCT PAGE (SINGLE VIEW) */
-
-#prod-header {
-    font-size: 4rem;
-}
-
-#basic-info {
-    margin-bottom: 20px;
-    padding: 10px;
-    border: 4px solid darkgrey;
-    font-size: 1.7rem;
-}
-
-.prod-info {
-    border-bottom: var(--basic-border);
-    width: fit-content;
-    margin-bottom: 5px;
-}
-
-.product-section {
-    display: flex;
-    flex: 2;
-    flex-flow: column;
-}
-
-#adv-info {
-    font-size: 1.4rem;
-    margin-bottom: 15px;
-}
-
-/* products (all view) */
-
-.table-wrapper {
-    display: flex;
-    flex-direction: column;
-    flex: 2;
-}

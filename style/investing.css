@@ -1,0 +1,19 @@
+.investing-wrapper {
+    display: flex;
+    flex-direction: column;
+    flex: 2;
+}
+
+.investing-header {
+    color: var(--color-dark);
+    border-bottom: var(--basic-border);
+    border-left: var(--basic-border);
+    padding-left: 15px;
+    padding-bottom: 5px;
+    margin-bottom: 10px;
+}
+
+.investing-text {
+    font-weight: 500;
+    font-size: 1.4rem;
+}

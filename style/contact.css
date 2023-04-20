@@ -1,0 +1,81 @@
+/* CONTACT US PAGE
+/*--------- contact us page ----------*/
+.row{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.location{
+    flex: 2;
+    margin: auto;
+}
+
+
+.contact-us{
+    display: flex;
+    flex: 2;
+}
+
+.location {
+    flex: 2;
+}
+.contact-col{
+    flex: 1;
+    padding: 10px;
+    /* height: 250px; */
+
+    margin-top: 20px;
+
+}
+#contact-info {
+    flex: 0;
+}
+
+#contact-form {
+    align-items: center;
+    justify-content: center;
+}
+.contact-col div{
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.contact-col div p{
+    padding: 0;
+}
+.contact-col div h2{
+    font-size:20px;
+    margin-bottom: 5px;
+    color: #555;
+    font-weight: 400;
+}
+.contact-col input, .contact-col textarea{
+    width: 100%;
+    padding: 5px;
+    outline: none;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    border-radius: 10px;
+}
+
+.contact-col button,
+.contact-col button:hover,
+.contact-col button::before,
+.contact-col button::after {
+    width: 100%;
+    padding: 15px;
+}
+
+.msg-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: left;
+}
+
+.msg-body textarea {
+    height: 150px;
+}
+
+
+

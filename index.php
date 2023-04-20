@@ -5,7 +5,7 @@
     <a href="./investing.php" class="invest">Invest With Us</a>
   </div>
   <div class="tile" id="tile2">
-    <a href="./mission.php" class="mission">Our Mission</a>
+    <a href="./testimonials.php" class="mission">Testimonials</a>
   </div>
   <div class="tile" id="tile3">
     <a href="./about.php" class="about">About Us</a>
