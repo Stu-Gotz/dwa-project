@@ -3,19 +3,17 @@
 ?>
 
 <div class="investing-wrapper">
-    <div class="strategy">
+    <div class="inv-content">
         <h1 class="investing-header">Our Strategy</h1>
-        <p class="investing-text">We help customers invest with a strategy that best suits their needs. <br> Our Relation Managers are especially trained to create bespoke investment opportunities and strategies that are tailored to your requirements, needs and preferences.</p>
+        <p class="investing-text">Our strategy is to offer tailored investment opportunities that meet the unique needs and preferences of our clients, leveraging our expertise in market analysis and risk management. We prioritize communication and transparency in all of our interactions with clients to foster long-term relationships and ensure their ongoing satisfaction. Ultimately, our goal is to deliver superior returns and help our clients achieve their financial goals.</p>
     </div>
-    <div class="mission">
+    <div class="inv-content">
         <h1 class="investing-header">Our Mission</h1>
-        <p class="investing-text">At Smarter Investing Inc., we pride ourselves in our excellent care and attention to ensure our clients recieve the best possible experience and benefits.
-            <br>
-        We value inclusivity, diversity and respect when it comes to managing your portfolio. Our managers will make sure that your needs are met and your preferences are respected.</p>
+        <p class="investing-text">Our mission is to provide exceptional investment services to our clients by leveraging our expertise and technology to deliver consistent, long-term returns. We aim to build strong and lasting relationships with our clients based on trust, transparency, and integrity. Ultimately, our goal is to help our clients achieve their financial objectives and secure their financial futures.</p>
     </div>
-    <div class="guarantee">
+    <div class="inv-content">
         <h1 class="investing-header">Our Guarantee</h1>
-        <p class="investing-text">We promise 100% satisfaction. Our dedicated customer support team is dedicated to solving your issues. Emails will be responded to within 3 business days. <br> Whether your objective is short-term gains, long-term planning or investing focused on ethical constraints, we will build a portfolio that matches your needs.</p>
+        <p class="investing-text">At our investment firm, we guarantee to provide personalized investment opportunities that align with our clients' financial objectives and risk tolerance. We pledge to communicate transparently and frequently with our clients to ensure that they always feel informed and empowered. If our clients are not satisfied with our services, we will work tirelessly to make it right.</p>
     </div>
 </div>
 

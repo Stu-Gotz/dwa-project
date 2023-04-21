@@ -1,10 +1,11 @@
-<?php 
+<?php
 include 'header.php';
 
-if(isset($_SESSION['name'])){
-    echo '<h2>You have successfully logged-in! You will be redirected to your homepage in <span id="counter">5</span> seconds...</h2>
+if (isset($_SESSION['name'])) {
+    echo '<div class="success-wrapper"><h2>You have successfully logged-in! You will be redirected to your homepage in <span id="counter">5</span> seconds...</h2>
     <br>
-    <a style="font-size=20px;" href="./profile.php">Click here to skip.</a>';
+    <a style="font-size=20px;" href="./profile.php">Click here to skip.</a>
+    </div>';
     header('refresh: 5, url=./profile.php');
 } else {
     echo '<h2>You are not logged in. Please return to the <a href="./login.php">login page</a> and try again.</h2>';
@@ -19,13 +20,15 @@ if(isset($_SESSION['name'])){
         // if (val<=0){
         //     location.href = 'profile.php';
         // }
-        if (val != 0){
+        if (val != 0) {
             val -= 1;
             i.innerHTML = val;
         }
     }
-    setInterval(function() { count(); }, 1000);
-
+    setInterval(function() {
+        count();
+    }, 1000);
 </script>
 
-<?php include 'footer.php'; ?>
+<?php //include 'footer.php'; 
+?>

@@ -1,9 +1,9 @@
 <?php include 'header.php';
 
 //keep pages private from non-registered users
-if(!isset($_SESSION['userid'])){
-    header('Location: ./login.php');
-  }
+if (!($_SESSION['type']) === 'admin') {
+    header('Location: ./index.php');
+}
 
 if (isset($_POST['submit'])) {
     $abbr = htmlspecialchars($_POST['abbr']);
@@ -46,9 +46,9 @@ if (isset($_POST['submit'])) {
 ?>
 <h2 id="invest-heading">Submit a New Investment Opportunity</h2>
 <div class="creation-wrapper">
-    
+
 </div>
-<form id="creation-form" action="<?php echo $_SERVER['PHP_SELF'] ?>" method="POST">
+<form id="creation-form" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']) ?>" method="POST">
     <div class="fields">
         <div class="invest-form-area" id="invest-abbr">
             <label for="abbr">Abbreviation: </label>

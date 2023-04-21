@@ -1,31 +1,31 @@
-<?php include 'header.php'; 
+<?php include 'header.php';
 
-if(isset($_POST['submit'])){
+if (isset($_POST['submit'])) {
     $name = $_POST['name'];
     $visitor_email = $_POST['email'];
     $subject = $_POST['subject'];
     $message = $_POST['message'];
-    
+
     $email_from = '<an email you have access to>';
-    
+
     $email_subject = 'New Form Submission';
-    
-    $email_body = "User Name: $name.\n".
-                    "User Email: $visitor_email.\n".
-                    "Subject: $subject.\n".
-                    "User Message: $message .\n";
-    
+
+    $email_body = "User Name: $name.\n" .
+        "User Email: $visitor_email.\n" .
+        "Subject: $subject.\n" .
+        "User Message: $message .\n";
+
     $to = 'customersupport@gmail.com';
-    
+
     $headers = "From: $email_from \r\n";
-    
+
     $headers .= "Reply-To: $visitor email \r\n";
-    
-    mail($to,$email_subject,$email_body,$headers);
-    
+
+    mail($to, $email_subject, $email_body, $headers);
+
     header("Location: ./index.php");
 }
- ?>
+?>
 
 
 
@@ -55,25 +55,25 @@ if(isset($_POST['submit'])){
             </div>
         </div>
         <div class="contact-col" id="contact-form">
-            <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
-            <!-- TODO: LABELS -->
-            <div>
-                <label for="name">Name: </label>
-                <input type="text" name="name" placeholder="Enter your name" required>
-            </div>
+            <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="post">
+                <!-- TODO: LABELS -->
                 <div>
-                <label for="email">Email: </label>
-                <input type="email" name="email" placeholder="Enter email address" required>
+                    <label for="name">Name: </label>
+                    <input type="text" name="name" placeholder="Enter your name" required>
                 </div>
                 <div>
-                <label for="subject">Subject: </label>
-                <input type="subject" name="subject" placeholder="Enter message subject" required>
+                    <label for="email">Email: </label>
+                    <input type="email" name="email" placeholder="Enter email address" required>
+                </div>
+                <div>
+                    <label for="subject">Subject: </label>
+                    <input type="subject" name="subject" placeholder="Enter message subject" required>
                 </div>
                 <div class="msg-body">
-                <label for="message">How can we help?</label>
-                <textarea row="8" name="message" placeholder ="Message" required></textarea>
+                    <label for="message">How can we help?</label>
+                    <textarea row="8" name="message" placeholder="Message" required></textarea>
                 </div>
-                
+
                 <button type="submit" class="btn btn-submit" name="submit">Send Message</button>
             </form>
         </div>
@@ -84,6 +84,7 @@ if(isset($_POST['submit'])){
 </div>
 
 </body>
+
 </html>
 
 <?php include './footer.php'; ?>

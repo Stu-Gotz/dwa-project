@@ -2,6 +2,9 @@
     display: flex;
     flex-direction: column;
     flex: 2;
+    justify-content: space-around;
+    align-items: center;
+    height: 100%;
 }
 
 .investing-header {
@@ -11,9 +14,15 @@
     padding-left: 15px;
     padding-bottom: 5px;
     margin-bottom: 10px;
+    font-size: 4rem;
 }
 
 .investing-text {
     font-weight: 500;
-    font-size: 1.4rem;
+    font-size: 1.8rem;
+}
+
+.inv-content {
+    margin-bottom: 30px;
+    width: 70%;
 }

@@ -2,7 +2,7 @@
   Navbar Settings
 */
 .heading {
-    width: 100vw;
+    width: 100%;
 }
 
 .navbar {
@@ -14,12 +14,11 @@
     color: var(--color-dark);
     margin-bottom: 2rem;
     padding: 0 2rem;
-    border-bottom-left-radius: 1rem;
-    border-bottom-right-radius: 1rem;
+    border-bottom: thick double black;
 }
 
 .login {
-    margin-right: 6px;
+    /* margin-right: 6px; */
     width: fit-content;
 }
 

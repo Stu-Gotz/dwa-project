@@ -3,6 +3,7 @@
 //is only needed once. 
 session_start();
 
+$_SESSION['errors'] = array();
 // We learned about this in class (I think), but session is a built-in function
 //that I don't really know deep down, but basically it allows access to the $_SESSION
 //variable which we can use throughout the page to inject data as an object with php (see later)
@@ -37,12 +38,6 @@ function begin_session($mysqli, $login)
         //query the db
         $res = $mysqli->execute_query('SELECT * FROM `users` WHERE email=?', [$login]);
         $user = $res->fetch_assoc();
-        // $user = mysqli_fetch_assoc($res);
-        // var_dump($user);
-
-        // $phone = str_replace(' ', '', );
-        // $phone = str_replace('-', '', $phone);
-        // $phone = str_replace('+', '', $phone);
 
         $_SESSION['userid'] = htmlspecialchars($user['id']);
         $_SESSION['name'] = htmlspecialchars($user['first_name'] . ' ' . $user['last_name']);
@@ -95,10 +90,10 @@ function begin_session($mysqli, $login)
                 <h2 class="title">Smarter Investing Inc.</h2>
                 <!-- If they are logged in, it welcomes the user and gives a link to their profile. Note the $_SESSION variable and how that doesn't change -->
                 <div class="login-area"><?php if (isset($_SESSION["name"])) {
-                    echo '<p style="margin-bottom:7px;">Welcome <a href="./profile.php">' . $_SESSION["name"] . '</p></a><a href="./logout.php" class="login"> Logout</a>';
-                } else {
-                    echo '<a href="./login.php" class="login">Log In</a>';
-                } ?></div>
+                                            echo '<p style="margin-bottom:7px;">Welcome <a href="./profile.php">' . $_SESSION["name"] . '</p></a><a href="./logout.php" class="login"> Logout</a>';
+                                        } else {
+                                            echo '<a href="./login.php" class="login">Log In</a>';
+                                        } ?></div>
             </div>
         </nav>
     </header>

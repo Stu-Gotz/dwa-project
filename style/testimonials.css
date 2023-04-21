@@ -1,0 +1,23 @@
+.test-wrapper {
+    display: flex;
+    flex-direction: column;
+    flex: 2;
+    align-items: center;
+    height: 100%;
+}
+
+.test-wrapper h1 {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.testimonails {
+    text-align: center;
+}
+
+.testimonial {
+    border: 2px solid var(--color-accent);
+    margin-bottom: 10px;
+    padding: 10px;
+    width: 65%;
+}

@@ -2,11 +2,11 @@
 $product = htmlspecialchars($_GET['prod']);
 
 //keep pages private from non-registered users
-if(!isset($_SESSION['userid'])){
+if (!isset($_SESSION['userid'])) {
     header('Location: ./login.php');
-  }
+}
 
-if(isset($_POST['delete'])){
+if (isset($_POST['delete'])) {
     $sql = "DELETE FROM `products` WHERE id=?";
     $mysqli->execute_query($sql, [$products]);
     $sql_ = "DELETE FROM `client_prod` WHERE prod_id=?";
@@ -22,10 +22,9 @@ $sql_ = "SELECT client_id FROM `client_prod` WHERE prod_id=?";
 $res_ = $mysqli->execute_query($sql_, [$product]);
 $users = $res_->fetch_all(MYSQLI_ASSOC);
 
-var_dump($users);
 $invested_users = array();
 
-for($u=0; $u<count($users); $u++){
+for ($u = 0; $u < count($users); $u++) {
     $usersql = "SELECT users.id, users.first_name, users.last_name, users.email FROM `users`
     WHERE id=?";
     $results = $mysqli->execute_query($usersql, [$users[$u]['client_id']]);
@@ -51,23 +50,23 @@ for($u=0; $u<count($users); $u++){
         <div class="prod-info" id="product-type">Product Type: <?php echo $prod['type']; ?></div>
     </div>
     <div class="about-prod">
-        <?php if(count($invested_users) === 0){
+        <?php if (count($invested_users) === 0) {
             echo 'Nobody has invested in this product yet.';
         } else {
             echo 'The following clients have invested in this product: <br>';
         } ?>
-        <?php for($i=0; $i<count($invested_users); $i++) :?>
-        
-        <?php echo '<a href="./users.php?email=' .  $invested_users[$i]['email']. '">' . $invested_users[$i]['first_name'] . ' ' . $invested_users[$i]['last_name'] . '</a><br>'?>
+        <?php for ($i = 0; $i < count($invested_users); $i++) : ?>
+
+            <?php echo '<a href="./user.php?email=' .  $invested_users[$i]['email'] . '">' . $invested_users[$i]['first_name'] . ' ' . $invested_users[$i]['last_name'] . '</a><br>' ?>
         <?php endfor ?>
-        
+
     </div>
-    <?php if(isset($_SESSION['type']) && $_SESSION['type'] === 'admin') :?>
-    <div class="admin-controls">
-        <form action="<?php echo $_SERVER['PHP_SELF'];?>" method="POST">
-        <button class="btn btn-del" type="submit" name="delete">Delete This Product</button>
-        </form>
-    </div>
+    <?php if (isset($_SESSION['type']) && $_SESSION['type'] === 'admin') : ?>
+        <div class="admin-controls">
+            <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="POST">
+                <button class="btn btn-del" type="submit" name="delete">Delete This Product</button>
+            </form>
+        </div>
     <?php endif ?>
 </div>
 <?php include './footer.php'; ?>

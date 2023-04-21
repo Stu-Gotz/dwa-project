@@ -1,0 +1,23 @@
+.reg-wrapper {
+    display: flex;
+    flex-direction: column;
+    flex: 2;
+    align-content: stretch;
+    justify-content: center;
+}
+
+.reg-area {
+    margin-bottom: 10px;
+}
+
+.reg-area label {
+    margin-right: 10px;
+}
+
+.reg-area button {
+    margin-bottom: 10px;
+}
+
+.reg-form {
+    width: 60%;
+}

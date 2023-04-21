@@ -24,12 +24,35 @@
 //         ]);
 //     }
 // }
+
+$message = "";
+if (count($_POST) > 0) {
+
+    $username = htmlspecialchars($_POST['username']);
+
+    $sql = "SELECT * FROM `users` WHERE email = ?";
+    $res = $mysqli->execute_query($sql, [$username]);
+    $data = $res->fetch_all(MYSQLI_ASSOC)[0];
+
+    $valid = password_verify(htmlspecialchars($_POST['password']), $data['password']);
+    if ($valid) {
+        begin_session($mysqli, $username);
+    } else {
+        echo '<script type="text/javascript">alert("Invalid Username or Password!")</script>';
+    }
+}
+if (isset($_SESSION["id"])) {
+    header("Location: ./loginsuccess.php");
+}
 ?>
+
 <!-- <h1 style="font-family: sans-serif; color: darkgray;">You have logged in as John Doe.</h1> -->
 <!-- login form -->
-<!-- "<?php echo $_SERVER['PHP_SELF']; ?>" -->
+<!-- "<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" -->
 <div class="login-wrapper">
-    <form action="autologin.php" method="POST">
+    <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']) ?>" method="POST">
+        <!-- <form action="./autologin.php" method="POST"> -->
+
         <h1>Login</h1>
         <div class="login-user">
             <label for="username">Username:</label>
@@ -44,7 +67,7 @@
         <div class="login-submit">
             <button class="btn btn-submit" name="submit" type="submit">Log In</button>
             <!-- client can click register if their account is not registered to login -->
-            <a href="register.php">Register</a>
+            <a href="./register.php">Register</a>
         </div>
     </form>
     <p>Interested in investing with us? <a href="register.php">Register here!</a></p>
@@ -52,4 +75,5 @@
 
 
 
-<?php include 'footer.php'; ?>
+<?php //include 'footer.php'; 
+?>
