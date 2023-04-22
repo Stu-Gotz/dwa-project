@@ -25,21 +25,35 @@
 //     }
 // }
 
-$message = "";
+/* 
+Determines validity of login credentials through the use of filter_var functions.
+To be extra secure, $_POST variables are still passed through htmlspecialchars().
+$data is an array of user data, retrieved by matching the email address with entries
+in the database. If one field is incorrect, an alert will notify the user.
+Users are not told which field is incorrect, to prevent attackers from narrowing down
+attack angles.
+Upon successfully loggin in, the user will be sent to a login success page before being redirected to their profile.
+*/
 if (count($_POST) > 0) {
+    if(filter_var($_POST['username'], FILTER_SANITIZE_EMAIL)){
+        $username = htmlspecialchars($_POST['username']);
+    
+            if(filter_var($_POST['password'], FILTER_SANITIZE_SPECIAL_CHARS)){
+                $password=htmlspecialchars($_POST['password']);
+            
+            $sql = "SELECT * FROM `users` WHERE email = ?";
+            $res = $mysqli->execute_query($sql, [$username]);
+            $data = $res->fetch_all(MYSQLI_ASSOC)[0];
 
-    $username = htmlspecialchars($_POST['username']);
-
-    $sql = "SELECT * FROM `users` WHERE email = ?";
-    $res = $mysqli->execute_query($sql, [$username]);
-    $data = $res->fetch_all(MYSQLI_ASSOC)[0];
-
-    $valid = password_verify(htmlspecialchars($_POST['password']), $data['password']);
-    if ($valid) {
-        begin_session($mysqli, $username);
-    } else {
-        echo '<script type="text/javascript">alert("Invalid Username or Password!")</script>';
+            $valid = password_verify($password, $data['password']);
+            if ($valid) {
+                begin_session($mysqli, $username);
+            } else {
+                echo '<script type="text/javascript">alert("Invalid Username or Password!")</script>';
+            }
+        }
     }
+    
 }
 if (isset($_SESSION["id"])) {
     header("Location: ./loginsuccess.php");

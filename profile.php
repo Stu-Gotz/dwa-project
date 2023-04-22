@@ -10,28 +10,31 @@ include 'header.php';
 $default = './assets/blank-profile.png';
 
 //keep pages private from non-registered users
-if(!isset($_SESSION['userid'])){
+if (!isset($_SESSION['userid'])) {
   header('Location: ./login.php');
 }
 
-if (isset($_POST['delete'])) {
-  $prod_id = $_POST['id'];
-  $row_id = (int)$_POST['row'];
+if (isset($_GET['submit'])) {
+  $prod_id = $_GET[0];
+  $row_id = (int)$_GET[1];
 
+  echo '<script type="text/javascript"><alert>"delete pressed"</alert></script>';
   //remove from associations
-  $sql = "DELETE FROM `prod_client` WHERE prod_id ='" . $prod_id . "' AND DELETE FROM `products` WHERE id= '". $prod_id . "';";
-  
+  $sql = "DELETE `prod_client`, `products` FROM `prod_client` WHERE prod_client.prod_id = ? AND products.id = ?;";
+  $res = $mysqli->execute_query($sql, [$prod_id, $prod_id]);
+  $res->free_result();
   unset($_SESSION['userprods'][$row_id]);
 
   header("Location: profile.php");
 }
-if (isset($POST['deny'])){
+if (isset($POST['deny'])) {
   header("Location: profile.php");
 }
 
-function determineStatus($product, $userid, $mysqli){
+function determineStatus($product, $userid, $mysqli)
+{
   $sql = "SELECT * FROM `client_prod` WHERE client_prod.prod_id = ? AND client_prod.client_id = ?";
-  if($mysqli->execute_query($sql, [$product, $userid])){
+  if ($mysqli->execute_query($sql, [$product, $userid])) {
     return 'accepted';
   } else {
     return 'pending';
@@ -41,7 +44,8 @@ function determineStatus($product, $userid, $mysqli){
 
 <div class="profile-page">
   <?php include './components/sidebar.php' ?>
-  <!-- Basically all this does is a bunch of if/else checks to dynamically set stuff based on if it is or isn't there -->
+  <!-- Pages will render differently based on the type of user that is loged in
+    Client users: will be given a  -->
   <div class="profile">
     <?php include './components/profilehead.php' ?>
     <?php if ($_SESSION['type'] === 'rm') : ?>
@@ -79,6 +83,7 @@ function determineStatus($product, $userid, $mysqli){
     <?php endif ?>
     <?php if ($_SESSION['type'] === 'client') : ?>
       <div class="table-area">
+        <h2>Current Investments</h2>
         <table class="client-table">
           <thead>
             <tr>
@@ -104,16 +109,48 @@ function determineStatus($product, $userid, $mysqli){
               echo '<tr class="' . determineStatus($_SESSION['userprods'][$i]['id'], $_SESSION['userid'], $mysqli) . '">
             <td><a href="./product.php?prod=' . htmlspecialchars($_SESSION['userprods'][$i]['id']) . '">' . $_SESSION['userprods'][$i]['abbr'] . '</a></td>
             <td><a href="./product.php?prod=' . htmlspecialchars($_SESSION['userprods'][$i]['id']) . '">' . $_SESSION['userprods'][$i]['name'] . '</a></td>
-            <td>' . $_SESSION['userprods'][$i]['closing_price'] . '</td>
-            <td>' . $_SESSION['userprods'][$i]['type'] . '</td>
-            <td>' . $_SESSION['userprods'][$i]['country'] . '</td>
-            <td>' . $_SESSION['userprods'][$i]['exchange'] . '</td>
-            <td> <form action="' . $_SERVER['PHP_SELF'] . '?id=' . htmlspecialchars($_SESSION['userprods'][$i]['id']) . '&row=' . $i. '" method="POST"><button class="btn btn-accept" type="submit" name="accept">Approve</button></form></td>
-            <td> <form action="' . $_SERVER['PHP_SELF'] . '?id=' . htmlspecialchars($_SESSION['userprods'][$i]['id']) . '&row=' . $i. '" method="POST"><button class="btn btn-del" type="submit" name="deny">Deny</button</form></td>
+            <td>' . htmlspecialchars($_SESSION['userprods'][$i]['closing_price']) . '</td>
+            <td>' . htmlspecialchars($_SESSION['userprods'][$i]['type']) . '</td>
+            <td>' . htmlspecialchars($_SESSION['userprods'][$i]['country']) . '</td>
+            <td>' . htmlspecialchars($_SESSION['userprods'][$i]['exchange']) . '</td>
+            <td> <form action="' . htmlspecialchars($_SERVER['PHP_SELF']) . '"?id=' . htmlspecialchars($_SESSION['userprods'][$i]['id']) . '&row=' . $i . '" method="GET"><button class="btn btn-accept" type="submit" name="accept">Approve</button></form></td>
+            <td> <form action="' . htmlspecialchars($_SERVER['PHP_SELF']) . '"?id=' . htmlspecialchars($_SESSION['userprods'][$i]['id']) . '&row=' . $i . '" method="GET"><button class="btn btn-del" type="submit" name="deny">Deny</button</form></td>
           </tr>';
             }
             ?>
           </tbody>
+        </table>
+        <div class="client-prefs">
+          <h2>Preferences </h2>
+          <?php
+          $sql_ = 'SELECT * FROM client_prefs WHERE client_id=?';
+          $res_ = $mysqli->execute_query($sql_, [$_SESSION['userid']]);
+          $prefs = $res_->fetch_all(MYSQLI_ASSOC);
+          ?>
+          <?php if ($prefs) : ?>
+            <?php foreach ($prefs as $p) : ?>
+              <div class="prefs-area" id="sector">
+                <h4 class="pref-cat">Sector: </h4>
+                <div class="pref"><?php echo $p['ind']; ?></div>
+              </div>
+              <div class="prefs-area" id="type">
+                <h4 class="pref-cat">Type: </h4>
+                <div class="pref"><?php echo $p['type']; ?></div>
+              </div>
+              <div class="prefs-area" id="country">
+                <h4 class="pref-cat">Country: </h4>
+                <div class="pref"><?php echo $p['country']; ?></div>
+              </div>
+              <div class="prefs-area" id="risk">
+                <h4 class="pref-cat">Risk: </h4>
+                <div class="pref"><?php echo $p['risk']; ?></div>
+              </div>
+            <?php endforeach ?>
+          <?php endif ?>
+        </div>
+
+
+
         </table>
       </div>
     <?php endif ?>
@@ -124,22 +161,31 @@ function determineStatus($product, $userid, $mysqli){
             <tr>
               <th>Product Abbreviation</th>
               <th>Product Name</th>
+              <th>Price</th>
+              <th>Type</th>
+              <th>Country</th>
+              <th>Exchange</th>
               <th>Status</th>
               <th>Delete</th>
             </tr>
           </thead>
           <tbody class="table-data">
             <?php
-              $sql = "SELECT products.name, products.id, products.abbr, products.status FROM `products`;";
-              $res = $mysqli->execute_query($sql);
-              $_SESSION['userprods'] = $res->fetch_all(MYSQLI_ASSOC);
+            $sql = "SELECT products.type, products.name, products.country, products.closing_price, 
+              products.abbr, products.exchange, products.id, products.status FROM `products`;";
+            $res = $mysqli->execute_query($sql);
+            $_SESSION['userprods'] = $res->fetch_all(MYSQLI_ASSOC);
 
             for ($i = 0; $i < count($_SESSION['userprods']); $i++) {
               echo '<tr>
             <td><a href="./product.php?prod=' . $_SESSION['userprods'][$i]['id'] . '">' . $_SESSION['userprods'][$i]['abbr'] . '</a></td>
             <td><a href="./product.php?prod=' . $_SESSION['userprods'][$i]['id'] . '">' . $_SESSION['userprods'][$i]['name'] . '</a></td>
-            <td class="' . $_SESSION['userprods'][$i]['status'] .  '">' . $_SESSION['userprods'][$i]['status']. '</td>
-            <td><form action="' . $_SERVER['PHP_SELF'] . '" method="POST?id="' . $_SESSION['userprods'][$i]['name'] .'&row="' . $i . '"><button class="btn btn-del" type="submit" name="delete">Delete</button></form></td>
+            <td>' . htmlspecialchars($_SESSION['userprods'][$i]['closing_price']) . '</td>
+            <td>' . htmlspecialchars($_SESSION['userprods'][$i]['type']) . '</td>
+            <td>' . htmlspecialchars($_SESSION['userprods'][$i]['country']) . '</td>
+            <td>' . htmlspecialchars($_SESSION['userprods'][$i]['exchange']) . '</td>
+            <td class="' . $_SESSION['userprods'][$i]['status'] .  '">' . $_SESSION['userprods'][$i]['status'] . '</td>
+            <td><form action="' . htmlspecialchars($_SERVER['PHP_SELF']) . '?id=' . $_SESSION['userprods'][$i]['id'] . '&row=' . $i . '" method="GET"><button class="btn btn-del" type="submit">Delete</button></form></td>
           </tr>';
             }
             ?>

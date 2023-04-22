@@ -7,7 +7,7 @@
 @import 'contact.css';
 @import 'testimonials.css';
 @import 'registration.css';
-
+@import 'prefs.css';
 /* 
 colours obtained from colorhunt.co 
 https: //www.colorhunt.co/palette/f8ede3dfd3c3d0b8a885586f
@@ -117,7 +117,7 @@ textarea {
 .btn-submit:hover,
 .btn-submit::before,
 .btn-submit::after {
-    background-color: lightgreen;
+    background-color: var(--color-dark);
 }
 
 
@@ -205,6 +205,7 @@ textarea {
 
 table {
     border-collapse: separate;
+    margin-bottom: 20px;
 }
 
 thead {

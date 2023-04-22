@@ -4,7 +4,7 @@ include 'header.php';
 if (isset($_SESSION['name'])) {
     echo '<div class="success-wrapper"><h2>You have successfully logged-in! You will be redirected to your homepage in <span id="counter">5</span> seconds...</h2>
     <br>
-    <a style="font-size=20px;" href="./profile.php">Click here to skip.</a>
+    <a style="font-size=20px; text-align: center;" href="./profile.php">Click here to skip.</a>
     </div>';
     header('refresh: 5, url=./profile.php');
 } else {

@@ -1,10 +1,17 @@
 <?php include 'header.php';
 
 if (isset($_POST['submit'])) {
-    $name = $_POST['name'];
-    $visitor_email = $_POST['email'];
-    $subject = $_POST['subject'];
-    $message = $_POST['message'];
+    $name = filter_var($_POST['name'], FILTER_SANITIZE_EMAIL);
+    if($name){
+        $name = htmlspecialchars($_POST['$name']);
+    }
+    $visitor_email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
+    if($visitor_email){
+        $visitor_email = htmlspecialchars($_POST['email']);
+    }
+    ;
+    $subject = htmlspecialchars($_POST['subject']);
+    $message = htmlspecialchars($_POST['message']);
 
     $email_from = '<an email you have access to>';
 
@@ -15,7 +22,7 @@ if (isset($_POST['submit'])) {
         "Subject: $subject.\n" .
         "User Message: $message .\n";
 
-    $to = 'customersupport@gmail.com';
+    $to = 'admin@investing.com';
 
     $headers = "From: $email_from \r\n";
 

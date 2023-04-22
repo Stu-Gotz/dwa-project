@@ -7,10 +7,10 @@ if (isset($_POST['submit'])) {
     $country = htmlspecialchars($_POST['country']);
     $risk = htmlspecialchars($_POST['risk']);
 
-    $sql = "INSERT INTO 'client-preferences' ('type', 'ind', 'country', 'risk' )
-    VALUES ('$type','$country', '$ind', '$risk')";
+    $sql = "INSERT INTO 'client_prefs' ('client_id', 'type', 'ind', 'country', 'risk' )
+    VALUES (?, ?, ?, ?, ?, )";
 
-    if ($mysqli->execute_query($sql)) {
+    if ($mysqli->execute_query($sql, [$id, $type, $ind, $country, $risk])) {
         echo '<script type="text/javascript">alert("success");</script>';
     } else {
         echo '<script type="text/javascript">alert("failure");</script>';

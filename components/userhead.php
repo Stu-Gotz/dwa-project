@@ -29,6 +29,6 @@
                         $res = $mysqli->execute_query($sql, [$user['id']]);
                         $rm = $res->fetch_all(MYSQLI_ASSOC)[0];
 
-                        echo 'Manager: <a href="' . $_SERVER['PHP_SELF'] . '?email=' . $rm['email'] . '">' . $rm['first_name'] . ' ' . $rm['last_name'] . '</a>';
+                        echo 'Manager: <a href="' . htmlspecialchars($_SERVER['PHP_SELF']) . '?email=' . $rm['email'] . '">' . $rm['first_name'] . ' ' . $rm['last_name'] . '</a>';
                     } ?></div>
 </div>    

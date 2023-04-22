@@ -5,7 +5,7 @@ if (!isset($_SESSION['userid'])) {
     header('Location: ./login.php');
 }
 
-if (isset($_GET['email'])) {
+if (isset(($_GET['email'])) && filter_var($_GET['email'], FILTER_VALIDATE_EMAIL)) {
     $email = htmlspecialchars($_GET['email']);
     $sql = "SELECT * FROM `users` WHERE email = ?";
     $res = $mysqli->execute_query($sql, [$email]);

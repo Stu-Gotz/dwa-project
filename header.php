@@ -3,6 +3,7 @@
 //is only needed once. 
 session_start();
 
+
 $_SESSION['errors'] = array();
 // We learned about this in class (I think), but session is a built-in function
 //that I don't really know deep down, but basically it allows access to the $_SESSION
@@ -24,7 +25,7 @@ $envs = include './env.php';
 $mysqli = new mysqli($envs['DB_HOST'], $envs['DB_USER'], $envs['DB_PASS'], $envs['DB_NAME']);
 
 //This will be used after zero-ing out a session (after a logout, for instance)
-//tl;dr it connects to the database, and sets user data in $_SESSION.
+//tl;dr it connects to the database, and sets user data in $_SE SSION.
 //Because this is only called through logging in, it allows these values to be
 //accessed on pages such as their profile and others.
 function begin_session($mysqli, $login)
@@ -52,7 +53,51 @@ function begin_session($mysqli, $login)
 
     return $mysqli;
 }
-// var_dump($_SESSION);
+
+function validate_text($field, $text, $c=FALSE, $minSize=0, $maxSize=2**32){
+    $errorMsg = "";
+    if($field === 'password'){
+
+        if($c){
+            if(!($field[0] === $field[1])){
+                $errorMsg = "Passwords do not match.";
+                return  $errorMsg;
+            }
+        }
+        if (strlen($_POST["password"]) <= 8) {
+            $errorMsg = "Your Password Must Contain At Least 8 Characters!";
+            return $errorMsg;
+        }
+        elseif(!preg_match("#[0-9]+#",$text)) {
+            $errorMsg = "Your Password Must Contain At Least 1 Number!";
+            return $errorMsg;
+        }
+        elseif(!preg_match("#[A-Z]+#",$text)) {
+            $errorMsg = "Your Password Must Contain At Least 1 Capital Letter!";
+            return $errorMsg;
+        }
+        elseif(!preg_match("#[a-z]+#",$text)) {
+            $errorMsg = "Your Password Must Contain At Least 1 Lowercase Letter!";
+            return $errorMsg;
+        } 
+    }
+
+    if($field === 'name'){
+        if (!preg_match("/^[a-zA-Z ]*$/", $text)) {
+            $errorMsg = "Only letters and white space allowed"; 
+            return $errorMsg;
+        }
+        return $errorMsg;
+    }
+
+    if($field === 'number'){
+        if(!preg_match("/[0-9]*/", $text)){
+            $errorMsg = "Only numbers are allowed.";
+            return $errorMsg;
+        }
+        return $errorMsg;
+    }
+}
 ?>
 
 <!-- after we do all the functions and set all the data, -->

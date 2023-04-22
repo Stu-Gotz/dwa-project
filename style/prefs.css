@@ -1,0 +1,21 @@
+.prefs-area {
+    display: flex;
+    flex: 2;
+    flex-direction: column;
+}
+.prefs-area {
+    display: flex;
+    flex-direction: row;
+    width: 30%;
+}
+
+.pref {
+    font-size: 2rem;
+    margin-left: auto;
+    text-align: left;
+}
+
+.pref-cat {
+    font-size: 2.5rem;
+    border-bottom: var(--basic-border);
+}
