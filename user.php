@@ -53,7 +53,7 @@ if (isset(($_GET['email'])) && filter_var($_GET['email'], FILTER_VALIDATE_EMAIL)
                         <td>' . $product_list[$i]['country'] . '</td>
                         <td>' . $product_list[$i]['sector1'] . '</td>
                         <td>' . $product_list[$i]['exchange'] . '</td>
-                        <td class="' . $product_list[$i]['status'] . '">' . $product_list[$i]['status'] . '</td>
+                        <td class="accepted">' . $product_list[$i]['status'] . '</td>
                         </tr>';
                         }
                     }

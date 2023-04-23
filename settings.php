@@ -4,16 +4,18 @@
 if (!isset($_SESSION['userid'])) {
   header('Location: ./login.php');
 }
-$id = $_SESSION['id'];
+$id = $_SESSION['userid'];
 
-if (isset($_POST['submit'])) {
-
+if (isset($_POST['submit']) && $_POST['submit'] === 'Submit') {
+  var_dump($_POST);
   // Logic to handle what is updated, since not everything may be changed at one time.
   // Password Change
-  if (isset($_POST['password']) && !($_POST['password'] === "")) { 
-    if (isset($_POST['password-conf']) && !($_POST['password-conf'] === "")) { 
-      if(filter_var(htmlspecialchars($_POST['password']), FILTER_SANITIZE_SPECIAL_CHARS) && 
-      filter_var(htmlspecialchars($_POST['password-conf']), FILTER_SANITIZE_SPECIAL_CHARS)) {
+  if ($_POST['password'] && !($_POST['password'] === "")) {
+    if ($_POST['password-conf'] && !($_POST['password-conf'] === "")) {
+      if (
+        filter_var(htmlspecialchars($_POST['password']), FILTER_SANITIZE_SPECIAL_CHARS) &&
+        filter_var(htmlspecialchars($_POST['password-conf']), FILTER_SANITIZE_SPECIAL_CHARS)
+      ) {
         $password = htmlspecialchars($_POST['password']);
         $passconf = htmlspecialchars($_POST['password-conf']);
         if (htmlspecialchars($password) === htmlspecialchars($passconf)) {
@@ -28,28 +30,26 @@ if (isset($_POST['submit'])) {
     }
   }
   // Location Change
-  if (isset($_POST['location'] ) && !($_POST['phone'] === "")) {
-    if(filter_var(htmlspecialchars($_POST['location']), FILTER_SANITIZE_SPECIAL_CHARS)){
+  if ($_POST['location'] && !($_POST['phone'] === "")) {
+    if (filter_var(htmlspecialchars($_POST['location']), FILTER_SANITIZE_SPECIAL_CHARS)) {
       $loc = htmlspecialchars($_POST['location']);
       $sql = "UPDATE `users` SET location = '$loc' WHERE id=?";
       $mysqli->execute_query($sql, [$id]);
       $_SESSION["loc"] = $loc;
     }
-    
   }
   // Phone Number Change
-  if (isset($_POST['phone']) && !($_POST['phone'] === "")) {
+  if ($_POST['phone'] && !($_POST['phone'] === "")) {
     $phone = preg_replace('/[^0-9+-]/', '', htmlspecialchars($_POST['phone']));
     $mysqli->execute_query("UPDATE `users` SET phone = '$phone' WHERE id=?", [$id]);
     $_SESSION["phone"] = $phone;
   }
-  if (isset($_POST['email']) && !($_POST['email'] === "")) {
-    if(filter_var(htmlspecialchars($_POST['email']), FILTER_SANITIZE_EMAIL)){
+  if ($_POST['email'] && !($_POST['email'] === "")) {
+    if (filter_var(htmlspecialchars($_POST['email']), FILTER_SANITIZE_EMAIL)) {
       $email = htmlspecialchars($_POST['email']);
       $mysqli->execute_query("UPDATE `users` SET email = '$email' WHERE id=?", [$id]);
       $_SESSION["email"] = $email;
     }
-    
   }
   // File upload 
   /* 
@@ -61,7 +61,7 @@ if (isset($_POST['submit'])) {
   This is not guaranteed, but since MD5 has 2**28 possible values, it is very unlikely.
 
   */
-  if (isset($_FILES['upload']) && is_uploaded_file($_FILES['upload']['tmp_name'])) {
+  if ($_FILES['upload'] && is_uploaded_file($_FILES['upload']['tmp_name'])) {
     $uploadOk = 1;
     $path = "./assets/";
     $tmp_name = $_FILES['upload']['tmp_name'];
@@ -96,45 +96,49 @@ if (isset($_POST['submit'])) {
         echo 'Successfully uploaded new photo!';
       }
     }
-
-    /*
+  }
+  /*
     This conditional statement checks if a client is logged in, since only
     clients can modify their preferences, this code should not execute for other users when
     they modify their settings.
     */
-    if ((isset($_SESSION['type']) && $_SESSION['type'] === 'client')) {
-      /*
+  if ($_SESSION['type'] && $_SESSION['type'] === 'client') {
+    /*
       Initialize variables to empty strings or NULL so that the SQL query will still execute.
       They will change if values are provided and pass the check.
       */
-      $type = "";
-      $country = "";
-      $ind= "";
-      $risk = NULL;
-  
-      if (!is_null(htmlspecialchars($_POST['type'])) && filter_var(htmlspecialchars($_POST['type']), FILTER_SANITIZE_SPECIAL_CHARS)) {
-        $type = htmlspecialchars(htmlspecialchars($_POST['type']));
-      }
-      if (!is_null(htmlspecialchars($_POST['ind'])) && filter_var($_POST['ind'], FILTER_SANITIZE_SPECIAL_CHARS)) {
-        $ind = htmlspecialchars(htmlspecialchars($_POST['ind']));
-      }
-      if (!is_null($_POST['country']) && filter_var(htmlspecialchars($_POST['country']), FILTER_SANITIZE_SPECIAL_CHARS)) {
-        $country = htmlspecialchars($_POST['country']);
-      }
-      if (!is_null($_POST['risk']) && filter_var($_POST['risk'], FILTER_SANITIZE_NUMBER_INT)) {
-        $risk = htmlspecialchars($_POST['risk']);
-      }
+
+    $type = "";
+    $country = "";
+    $ind = "";
+    $risk = NULL;
+
+    if (!is_null(htmlspecialchars($_POST['type'])) && filter_var($_POST['type'], FILTER_SANITIZE_SPECIAL_CHARS)) {
+      $type = htmlspecialchars($_POST['type']);
+    }
+    if (!is_null(htmlspecialchars($_POST['ind'])) && filter_var($_POST['ind'], FILTER_SANITIZE_SPECIAL_CHARS)) {
+      $ind = htmlspecialchars($_POST['ind']);
+    }
+    if (!is_null($_POST['country']) && filter_var($_POST['country'], FILTER_SANITIZE_SPECIAL_CHARS)) {
+      $country = htmlspecialchars($_POST['country']);
+    }
+    if (!is_null($_POST['risk']) && filter_var($_POST['risk'], FILTER_SANITIZE_NUMBER_INT)) {
+      $risk = htmlspecialchars($_POST['risk']);
+    }
 
 
-      $sql = "INSERT INTO client_prefs (id, client_id, 'type', ind, country, risk) VALUES ('$id', '$type', '$ind', '$country', '$risk');";
+    $sql = "INSERT INTO `client_prefs` (`client_id`, `type`, `ind`, `country`, `risk`) 
+      VALUES (?, ?, ?, ?, ?);";
 
-      $mysqli_query($sql);
+    $res = $mysqli->execute_query($sql, [$id, $type, $ind, $country, $risk]);
+    if ($res) {
+      header('Location: ./settings.php');
     }
   }
-}
-elseif(isset($_POST['reset'])) {
-  $sql = "DELETE FROM client_prefs WHERE client_id = " . $id;
-  $res = $mysqli->query($sql);
+
+  // } elseif ($_POST['reset']) {
+  //   $sql = "DELETE FROM client_prefs WHERE client_id = " . $id;
+  //   $res = $mysqli->query($sql);
 }
 ?>
 
@@ -185,12 +189,12 @@ elseif(isset($_POST['reset'])) {
       </div>
       <div class="preferences-form-area" id="preferences-risk">
         <label for="risk">Risk Rating: </label>
-        <input class="preference-text" type="text" name="risk" placeholder="1 (low) to 5 (high)"> <br>
+        <input class="preference-text" type="number" name="risk" placeholder="1 (low) to 5 (high)" min="1" max="5"> <br>
       </div>
-      <button type="submit" class="btn btn-del" name="reset">Reset Preferences</button>
+      <input type="submit" class="btn btn-del" name="submit" value="Reset" />
     <?php endif ?>
-    <button type="submit" class="btn btn-submit" name="submit">Submit Changes</button>
-    
+    <input type="submit" class="btn btn-submit" name="submit" value="Submit" />
+
 
   </form>
 </div>

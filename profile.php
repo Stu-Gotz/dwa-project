@@ -14,32 +14,75 @@ if (!isset($_SESSION['userid'])) {
   header('Location: ./login.php');
 }
 
-if (isset($_GET['submit'])) {
-  $prod_id = $_GET[0];
-  $row_id = (int)$_GET[1];
+if ($_POST) {
 
-  echo '<script type="text/javascript"><alert>"delete pressed"</alert></script>';
-  //remove from associations
-  $sql = "DELETE `prod_client`, `products` FROM `prod_client` WHERE prod_client.prod_id = ? AND products.id = ?;";
-  $res = $mysqli->execute_query($sql, [$prod_id, $prod_id]);
-  $res->free_result();
-  unset($_SESSION['userprods'][$row_id]);
+  if ($_POST['action'] && ($_POST['action'] === "Remove")) {
+    if ($_SESSION['type'] === 'client') {
+      $prod_id = (int)htmlspecialchars($_POST['id']);
+      $row_id = (int)htmlspecialchars($_POST['row']);
+      $client_id = (int)htmlspecialchars($_SESSION['userid']);
 
-  header("Location: profile.php");
-}
-if (isset($POST['deny'])) {
-  header("Location: profile.php");
-}
 
-function determineStatus($product, $userid, $mysqli)
-{
-  $sql = "SELECT * FROM `client_prod` WHERE client_prod.prod_id = ? AND client_prod.client_id = ?";
-  if ($mysqli->execute_query($sql, [$product, $userid])) {
-    return 'accepted';
-  } else {
-    return 'pending';
-  };
+      //remove product from lookup tables
+      $sql = "DELETE FROM `client_prod` WHERE prod_id = $prod_id AND client_id = $client_id;";
+      if ($mysqli->query($sql)) {
+
+        unset($_SESSION['userprods'][$row_id]);
+
+        header("Location: ./profile.php");
+      } elseif ($mysqli->errno) {
+        echo 'Error: ' . $mysqli->error;
+      }
+    } elseif ($_SESSION['type'] === "admin") {
+      delete_product(htmlspecialchars($_POST['id']), $mysqli);
+      header("Location: ./profile.php");
+    }
+  }
+  if ($_POST['action'] && ($_POST['action'] === 'Approve')) {
+    if ($_POST['id'] && (filter_var($_POST['id'], FILTER_SANITIZE_SPECIAL_CHARS))) {
+      $userid = $_SESSION['userid'];
+      $productid = $_POST['id'];
+      $sql = "INSERT INTO `client_prod` (`client_id`, `prod_id`) VALUES (?, ?);";;
+      $mysqli->execute_query($sql, [$userid, $productid]);
+
+      $sql_ = "UPDATE `products` SET status = 'accepted' WHERE id = ?";
+      $mysqli->execute_query($sql_, [$productid]);
+      if ($mysqli->errno) {
+        echo 'SQL Error: ' . $mysqli->error;
+      }
+
+      #, [$_SESSION['userid'], $_POST['id'], $_SESSION['userid'], $_POST['id']]);
+    }
+  }
 }
+// Function to determine the status of a product, accepted versus pending. Accepted
+// means the client is currently invested. Pending means the client is not, but can.
+// function determineStatus($product, $userid, $mysqli)
+// {
+//   $sql = "SELECT * FROM `client_prod` WHERE client_prod.prod_id = ? AND client_prod.client_id = ?";
+//   // $res = $mysqli->execute_query($sql, [$product, $userid]);
+//   // $active = $res->fetch_all();
+//   // $res_ = $mysqli->execute_query("SELECT * FROM products");
+//   // $potential = $res_->fetch_all();
+
+//   // for($a = 0; $a < count($active); $a++;) {
+//   //   for ($p = 0; $p < count($potential); $p++ ) {
+//   //     if ($potential[$p]['id'] === $active[$a]['prod_id']) {
+//   //       continue;
+//   //     } else {
+//   //       array_push($_SESSION['userprods'], $p);
+//   //     }
+//   //   }
+//   // }
+//   if ($mysqli->execute_query($sql, [$product, $userid])) {
+//     return 'accepted';
+//   } else {
+//     return 'pending';
+//   };
+// }
+//
+// Sadly this never worked. It would be much easier to handle with JavaScript to 
+// simply edit CSS class names conditionally.
 ?>
 
 <div class="profile-page">
@@ -70,7 +113,9 @@ function determineStatus($product, $userid, $mysqli)
 
             for ($i = 0; $i < count($_SESSION['clients']); $i++) {
               echo '<tr>
-            <td><a href="./user.php?email=' . $_SESSION['clients'][$i]['email'] . '">' . $_SESSION['clients'][$i]['first_name'] . ' ' . $_SESSION['clients'][$i]['last_name'] . '</a></td>
+            <td><a href="./user.php?email=' . $_SESSION['clients'][$i]['email']
+                . '">' . $_SESSION['clients'][$i]['first_name'] . ' ' .
+                $_SESSION['clients'][$i]['last_name'] . '</a></td>
             <td>' . $_SESSION['clients'][$i]['email'] . '</td>
             <td>' . $_SESSION['clients'][$i]['location'] . '</td>
             <td>' . $_SESSION['clients'][$i]['phone'] . '</td>
@@ -87,39 +132,103 @@ function determineStatus($product, $userid, $mysqli)
         <table class="client-table">
           <thead>
             <tr>
+              <th>Product Abbr.</th>
               <th>Product Name</th>
-              <th>Product Email</th>
               <th>Price</th>
               <th>Type</th>
               <th>Country</th>
               <th>Exchange</th>
-              <th>Accept</th>
-              <th>Deny</th>
+              <th>Edit</th>
             </tr>
           </thead>
           <tbody class="table-data">
             <?php
+            $client_active_products = [];
+
             $sql = 'SELECT products.type, products.name, products.country, products.closing_price, 
             products.abbr, products.exchange, products.id, products.status FROM `products` INNER JOIN 
             `client_prod` ON client_id = ? AND products.id = client_prod.prod_id';
             $res = $mysqli->execute_query($sql, [$_SESSION['userid']]);
-            $_SESSION['userprods'] = $res->fetch_all(MYSQLI_ASSOC);
+            $client_active_products = $res->fetch_all(MYSQLI_ASSOC);
 
-            for ($i = 0; $i < count($_SESSION['userprods']); $i++) {
-              echo '<tr class="' . determineStatus($_SESSION['userprods'][$i]['id'], $_SESSION['userid'], $mysqli) . '">
-            <td><a href="./product.php?prod=' . htmlspecialchars($_SESSION['userprods'][$i]['id']) . '">' . $_SESSION['userprods'][$i]['abbr'] . '</a></td>
-            <td><a href="./product.php?prod=' . htmlspecialchars($_SESSION['userprods'][$i]['id']) . '">' . $_SESSION['userprods'][$i]['name'] . '</a></td>
-            <td>' . htmlspecialchars($_SESSION['userprods'][$i]['closing_price']) . '</td>
-            <td>' . htmlspecialchars($_SESSION['userprods'][$i]['type']) . '</td>
-            <td>' . htmlspecialchars($_SESSION['userprods'][$i]['country']) . '</td>
-            <td>' . htmlspecialchars($_SESSION['userprods'][$i]['exchange']) . '</td>
-            <td> <form action="' . htmlspecialchars($_SERVER['PHP_SELF']) . '"?id=' . htmlspecialchars($_SESSION['userprods'][$i]['id']) . '&row=' . $i . '" method="GET"><button class="btn btn-accept" type="submit" name="accept">Approve</button></form></td>
-            <td> <form action="' . htmlspecialchars($_SERVER['PHP_SELF']) . '"?id=' . htmlspecialchars($_SESSION['userprods'][$i]['id']) . '&row=' . $i . '" method="GET"><button class="btn btn-del" type="submit" name="deny">Deny</button</form></td>
+            for ($i = 0; $i < count($client_active_products); $i++) {
+              echo '<tr class="accepted">
+            <td><a href="./product.php?id=' .
+                htmlspecialchars($client_active_products[$i]['id']) . '">' .
+                $client_active_products[$i]['abbr'] . '</a></td>
+            <td><a href="./product.php?id=' .
+                htmlspecialchars($client_active_products[$i]['id']) . '">' .
+                $client_active_products[$i]['name'] . '</a></td>
+            <td>' . htmlspecialchars($client_active_products[$i]['closing_price']) . '</td>
+            <td>' . htmlspecialchars($client_active_products[$i]['type']) . '</td>
+            <td>' . htmlspecialchars($client_active_products[$i]['country']) . '</td>
+            <td>' . htmlspecialchars($client_active_products[$i]['exchange']) . '</td>
+            <td> <form action="' . htmlspecialchars($_SERVER['PHP_SELF']) .
+                '" method="post"><input class="btn btn-del" type="submit" name="action" value="Remove"/><input type="hidden" name="row" value="'
+                . $i . '"/><input type="hidden" name="id" value="' .
+                htmlspecialchars($client_active_products[$i]['id']) . '"/> </form></td>
           </tr>';
             }
             ?>
+
           </tbody>
         </table>
+        <h2>New Opportunities</h2>
+        <table class="client-table">
+          <thead>
+            <tr>
+              <th>Product Abbr.</th>
+              <th>Product Name</th>
+              <th>Price</th>
+              <th>Type</th>
+              <th>Country</th>
+              <th>Exchange</th>
+              <th>Edit</th>
+            </tr>
+          </thead>
+          <tbody class="table-data">
+            <?php
+
+            $sql_ = 'SELECT * FROM `products`';
+            $res_ = $mysqli->execute_query($sql_);
+            $available = $res_->fetch_all(MYSQLI_ASSOC);
+
+            for ($a = 0; $a < count($available); $a++) {
+              foreach ($client_active_products as $cap) {
+                if ($available[$a]['abbr'] === $cap['abbr']) {
+                  array_splice($available, $a, 1);
+                  break;
+                  // if (count($available) === abs(count($available) - count($client_active_products))) {
+                  //   break;
+                  // } else {
+                  // }
+                }
+              }
+            }
+            echo count($available);
+            for ($i = 0; $i < count($available); $i++) {
+              echo '<tr class="pending">
+            <td><a href="./product.php?id=' .
+                htmlspecialchars($available[$i]['id']) . '">' .
+                $available[$i]['abbr'] . '</a></td>
+            <td><a href="./product.php?id=' .
+                htmlspecialchars($available[$i]['id']) . '">' .
+                $available[$i]['name'] . '</a></td>
+            <td>' . htmlspecialchars($available[$i]['closing_price']) . '</td>
+            <td>' . htmlspecialchars($available[$i]['type']) . '</td>
+            <td>' . htmlspecialchars($available[$i]['country']) . '</td>
+            <td>' . htmlspecialchars($available[$i]['exchange']) . '</td>
+            <td> <form action="' . htmlspecialchars($_SERVER['PHP_SELF']) .
+                '" method="post"><input class="btn btn-accept" type="submit" name="action" value="Approve" /><input type="hidden" name="row" value="'
+                . $i . '" /><input type="hidden" name="id" value="' .
+                htmlspecialchars($available[$i]['id']) . '" /> </form></td>
+          </tr>';
+            }
+            ?>
+
+          </tbody>
+        </table>
+
         <div class="client-prefs">
           <h2>Preferences </h2>
           <?php
@@ -148,9 +257,6 @@ function determineStatus($product, $userid, $mysqli)
             <?php endforeach ?>
           <?php endif ?>
         </div>
-
-
-
         </table>
       </div>
     <?php endif ?>
@@ -171,22 +277,24 @@ function determineStatus($product, $userid, $mysqli)
           </thead>
           <tbody class="table-data">
             <?php
-            $sql = "SELECT products.type, products.name, products.country, products.closing_price, 
-              products.abbr, products.exchange, products.id, products.status FROM `products`;";
+            $sql = "SELECT DISTINCT * FROM `products`;";
             $res = $mysqli->execute_query($sql);
-            $_SESSION['userprods'] = $res->fetch_all(MYSQLI_ASSOC);
+            $all_products = $res->fetch_all(MYSQLI_ASSOC);
 
-            for ($i = 0; $i < count($_SESSION['userprods']); $i++) {
+            for ($i = 0; $i < count($all_products); $i++) {
               echo '<tr>
-            <td><a href="./product.php?prod=' . $_SESSION['userprods'][$i]['id'] . '">' . $_SESSION['userprods'][$i]['abbr'] . '</a></td>
-            <td><a href="./product.php?prod=' . $_SESSION['userprods'][$i]['id'] . '">' . $_SESSION['userprods'][$i]['name'] . '</a></td>
-            <td>' . htmlspecialchars($_SESSION['userprods'][$i]['closing_price']) . '</td>
-            <td>' . htmlspecialchars($_SESSION['userprods'][$i]['type']) . '</td>
-            <td>' . htmlspecialchars($_SESSION['userprods'][$i]['country']) . '</td>
-            <td>' . htmlspecialchars($_SESSION['userprods'][$i]['exchange']) . '</td>
-            <td class="' . $_SESSION['userprods'][$i]['status'] .  '">' . $_SESSION['userprods'][$i]['status'] . '</td>
-            <td><form action="' . htmlspecialchars($_SERVER['PHP_SELF']) . '?id=' . $_SESSION['userprods'][$i]['id'] . '&row=' . $i . '" method="GET"><button class="btn btn-del" type="submit">Delete</button></form></td>
-          </tr>';
+            <td><a href="./product.php?id=' . $all_products[$i]['id'] . '">' . $all_products[$i]['abbr'] . '</a></td>
+            <td><a href="./product.php?id=' . $all_products[$i]['id'] . '">' . $all_products[$i]['name'] . '</a></td>
+            <td>' . htmlspecialchars($all_products[$i]['closing_price']) . '</td>
+            <td>' . htmlspecialchars($all_products[$i]['type']) . '</td>
+            <td>' . htmlspecialchars($all_products[$i]['country']) . '</td>
+            <td>' . htmlspecialchars($all_products[$i]['exchange']) . '</td>
+            <td class="' . strtolower($all_products[$i]['status']) .  '">' . strtoupper($all_products[$i]['status']) . '</td>
+            <td> <form action="' . htmlspecialchars($_SERVER['PHP_SELF']) .
+                '" method="post"><input class="btn btn-del" type="submit" name="action" value="Remove"/><input type="hidden" name="row" value="'
+                . $i . '"/><input type="hidden" name="id" value="' .
+                htmlspecialchars($all_products[$i]['id']) . '"/> </form></td>
+            </tr>';
             }
             ?>
           </tbody>

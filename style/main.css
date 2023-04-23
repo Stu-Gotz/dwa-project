@@ -8,6 +8,7 @@
 @import 'testimonials.css';
 @import 'registration.css';
 @import 'prefs.css';
+
 /* 
 colours obtained from colorhunt.co 
 https: //www.colorhunt.co/palette/f8ede3dfd3c3d0b8a885586f
@@ -166,6 +167,11 @@ textarea {
 }
 
 
+.error {
+    color: red;
+    text-shadow: 1px 2px 2px black;
+    font-style: italic;
+}
 
 .login-wrapper {
     display: flex;

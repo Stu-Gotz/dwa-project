@@ -35,12 +35,12 @@ attack angles.
 Upon successfully loggin in, the user will be sent to a login success page before being redirected to their profile.
 */
 if (count($_POST) > 0) {
-    if(filter_var($_POST['username'], FILTER_SANITIZE_EMAIL)){
+    if (filter_var($_POST['username'], FILTER_SANITIZE_EMAIL)) {
         $username = htmlspecialchars($_POST['username']);
-    
-            if(filter_var($_POST['password'], FILTER_SANITIZE_SPECIAL_CHARS)){
-                $password=htmlspecialchars($_POST['password']);
-            
+
+        if (filter_var($_POST['password'], FILTER_SANITIZE_SPECIAL_CHARS)) {
+            $password = htmlspecialchars($_POST['password']);
+
             $sql = "SELECT * FROM `users` WHERE email = ?";
             $res = $mysqli->execute_query($sql, [$username]);
             $data = $res->fetch_all(MYSQLI_ASSOC)[0];
@@ -48,22 +48,23 @@ if (count($_POST) > 0) {
             $valid = password_verify($password, $data['password']);
             if ($valid) {
                 begin_session($mysqli, $username);
+                $_SESSION['errors']['login_error'] = FALSE;
+                header("Location: ./loginsuccess.php");
             } else {
-                echo '<script type="text/javascript">alert("Invalid Username or Password!")</script>';
+                $_SESSION['errors']['login_error'] = 'Invalid Username or password.';
+                header('Location: ./login.php');
             }
         }
     }
-    
 }
-if (isset($_SESSION["id"])) {
-    header("Location: ./loginsuccess.php");
-}
+
 ?>
 
-<!-- <h1 style="font-family: sans-serif; color: darkgray;">You have logged in as John Doe.</h1> -->
-<!-- login form -->
-<!-- "<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" -->
+
 <div class="login-wrapper">
+    <?php if (isset($_SESSION['errors']['login_error'])) : ?>
+        <div class="error"> <?php echo htmlspecialchars($_SESSION['errors']['login_error']) ?></div>
+    <?php endif ?>
     <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']) ?>" method="POST">
         <!-- <form action="./autologin.php" method="POST"> -->
 

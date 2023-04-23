@@ -1,12 +1,17 @@
 <?php include './header.php';
 //keep pages private from non-registered users
-if(!isset($_SESSION['userid'])){
+if (!isset($_SESSION['userid'])) {
     header('Location: ./login.php');
-  }
+}
 
 $sql = "SELECT * FROM `products`";
 $res = $mysqli->execute_query($sql);
 $data = $res->fetch_all(MYSQLI_ASSOC);
+
+if ($_POST && filter_var($_POST['id'], FILTER_SANITIZE_SPECIAL_CHARS)) {
+    delete_product(htmlspecialchars($_POST['id']), $mysqli);
+    header("Location: './products.php'");
+}
 
 ?>
 <h1>All Available Products at Smarter Investing Inc.</h1>
@@ -25,12 +30,15 @@ $data = $res->fetch_all(MYSQLI_ASSOC);
                 <th>Product Country</th>
                 <th>Product Issuer</th>
                 <th>Product Closing Date</th>
+                <?php if ($_SESSION['type'] === "admin") {
+                    echo '<th>Delete Product</th>';
+                } ?>
             </tr>
         </thead>
         <tbody>
             <?php for ($i = 0; $i < count($data); $i++) : ?>
                 <tr>
-                    <td><?php echo '<a href="./product.php?prod='. $data[$i]['id'] .  '">' . $data[$i]['abbr']; ?></td>
+                    <td><?php echo '<a href="./product.php?id=' . $data[$i]['id'] .  '">' . $data[$i]['abbr']; ?></td>
                     <td><?php echo $data[$i]['name']; ?></td>
                     <td><?php echo $data[$i]['exchange']; ?></td>
                     <td><?php echo $data[$i]['type']; ?></td>
@@ -41,6 +49,12 @@ $data = $res->fetch_all(MYSQLI_ASSOC);
                     <td><?php echo $data[$i]['country']; ?></td>
                     <td><?php echo $data[$i]['issuer']; ?></td>
                     <td><?php echo $data[$i]['closing_date']; ?></td>
+                    <?php if ($_SESSION['type'] === "admin") {
+                        echo '<td> <form action="' . htmlspecialchars($_SERVER['PHP_SELF']) .
+                            '" method="post"><input class="btn btn-del" type="submit" name="action" value="Remove"/><input type="hidden" name="row" value="'
+                            . $i . '"/><input type="hidden" name="id" value="' .
+                            htmlspecialchars($data[$i]['id']) . '"/> </form></td>';
+                    } ?>
                 </tr>
             <?php endfor ?>
         </tbody>

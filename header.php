@@ -53,13 +53,25 @@ function begin_session($mysqli, $login)
 
     return $mysqli;
 }
+function delete_product($id, $mysqli)
+{
+    if ($_POST) {
 
-function validate_text($field, $text, $c=FALSE, $minSize=0, $maxSize=2**32){
+        if (filter_var($id, FILTER_SANITIZE_SPECIAL_CHARS)) {
+            $sql = "DELETE FROM `products` WHERE id=?";
+            $mysqli->execute_query($sql, [$id]);
+            $sql_ = "DELETE FROM `client_prod` WHERE prod_id=?";
+            $mysqli->execute_query($sql_, [$id]);
+        }
+    }
+}
+function validate_text($field, $text, $c = FALSE, $minSize = 0, $maxSize = 2 ** 32)
+{
     $errorMsg = "";
-    if($field === 'password'){
+    if ($field === 'password') {
 
-        if($c){
-            if(!($field[0] === $field[1])){
+        if ($c) {
+            if (!($field[0] === $field[1])) {
                 $errorMsg = "Passwords do not match.";
                 return  $errorMsg;
             }
@@ -67,31 +79,28 @@ function validate_text($field, $text, $c=FALSE, $minSize=0, $maxSize=2**32){
         if (strlen($_POST["password"]) <= 8) {
             $errorMsg = "Your Password Must Contain At Least 8 Characters!";
             return $errorMsg;
-        }
-        elseif(!preg_match("#[0-9]+#",$text)) {
+        } elseif (!preg_match("#[0-9]+#", $text)) {
             $errorMsg = "Your Password Must Contain At Least 1 Number!";
             return $errorMsg;
-        }
-        elseif(!preg_match("#[A-Z]+#",$text)) {
+        } elseif (!preg_match("#[A-Z]+#", $text)) {
             $errorMsg = "Your Password Must Contain At Least 1 Capital Letter!";
             return $errorMsg;
-        }
-        elseif(!preg_match("#[a-z]+#",$text)) {
+        } elseif (!preg_match("#[a-z]+#", $text)) {
             $errorMsg = "Your Password Must Contain At Least 1 Lowercase Letter!";
             return $errorMsg;
-        } 
+        }
     }
 
-    if($field === 'name'){
+    if ($field === 'name') {
         if (!preg_match("/^[a-zA-Z ]*$/", $text)) {
-            $errorMsg = "Only letters and white space allowed"; 
+            $errorMsg = "Only letters and white space allowed";
             return $errorMsg;
         }
         return $errorMsg;
     }
 
-    if($field === 'number'){
-        if(!preg_match("/[0-9]*/", $text)){
+    if ($field === 'number') {
+        if (!preg_match("/[0-9]*/", $text)) {
             $errorMsg = "Only numbers are allowed.";
             return $errorMsg;
         }

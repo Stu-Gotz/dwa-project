@@ -1,23 +1,36 @@
 <?php include './header.php';
-$product = htmlspecialchars($_GET['prod']);
+$product = "";
+
+if ($_POST) {
+    $product = $_POST['id'];
+} elseif ($_GET) {
+    $product = $_GET['id'];
+}
+#htmlspecialchars($_POST['submit']['id']);
 
 //keep pages private from non-registered users
 if (!isset($_SESSION['userid'])) {
     header('Location: ./login.php');
 }
 
-if (isset($_POST['delete'])) {
-    $sql = "DELETE FROM `products` WHERE id=?";
-    $mysqli->execute_query($sql, [$products]);
-    $sql_ = "DELETE FROM `client_prod` WHERE prod_id=?";
-    $mysqli->execute_query($sql_, [$product]);
-    header('Location: ./success.php');
-}
+// if ($_POST) {
+
+//     if (isset($_POST['id']) && filter_var($_POST['id'], FILTER_SANITIZE_SPECIAL_CHARS)) {
+//         $sql = "DELETE FROM `products` WHERE id=?";
+//         $mysqli->execute_query($sql, [$product]);
+//         $sql_ = "DELETE FROM `client_prod` WHERE prod_id=?";
+//         $mysqli->execute_query($sql_, [$product]);
+//         header('Location: ./profile.php');
+//     }
+// }
+
+delete_product($product, $mysqli);
+header("Location: './products.php'");
 
 $sql = "SELECT * FROM `products` WHERE id = ?";
 $res = $mysqli->execute_query($sql, [$product]);
-$prod = $res->fetch_all(MYSQLI_ASSOC)[0];
-
+$prod = $res->fetch_assoc();
+var_dump($prod);
 $sql_ = "SELECT client_id FROM `client_prod` WHERE prod_id=?";
 $res_ = $mysqli->execute_query($sql_, [$product]);
 $users = $res_->fetch_all(MYSQLI_ASSOC);
@@ -31,6 +44,7 @@ for ($u = 0; $u < count($users); $u++) {
     $user = $results->fetch_all(MYSQLI_ASSOC)[0];
     array_push($invested_users, $user);
 }
+
 
 ?>
 
@@ -64,7 +78,8 @@ for ($u = 0; $u < count($users); $u++) {
     <?php if (isset($_SESSION['type']) && $_SESSION['type'] === 'admin') : ?>
         <div class="admin-controls">
             <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="POST">
-                <button class="btn btn-del" type="submit" name="delete">Delete This Product</button>
+                <input class="btn btn-del" type="submit" name="delete" value="Delete" />
+                <input type="hidden" name="id" value="<?php echo $prod['id']; ?>">
             </form>
         </div>
     <?php endif ?>
