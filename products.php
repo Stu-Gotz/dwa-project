@@ -8,9 +8,10 @@ $sql = "SELECT * FROM `products`";
 $res = $mysqli->execute_query($sql);
 $data = $res->fetch_all(MYSQLI_ASSOC);
 
-if ($_POST && filter_var($_POST['id'], FILTER_SANITIZE_SPECIAL_CHARS)) {
-    delete_product(htmlspecialchars($_POST['id']), $mysqli);
-    header("Location: './products.php'");
+if ($_POST && $_SESSION['type'] === 'admin') {
+    if (filter_var($_POST['id'], FILTER_SANITIZE_SPECIAL_CHARS)) {
+        delete_product(htmlspecialchars($_POST['id']), $mysqli);
+    }
 }
 
 ?>

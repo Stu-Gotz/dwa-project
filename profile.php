@@ -39,47 +39,75 @@ if ($_POST) {
     }
   }
   if ($_POST['action'] && ($_POST['action'] === 'Approve')) {
+    $valid = false;
     if ($_POST['id'] && (filter_var($_POST['id'], FILTER_SANITIZE_SPECIAL_CHARS))) {
-      $userid = $_SESSION['userid'];
-      $productid = $_POST['id'];
-      $sql = "INSERT INTO `client_prod` (`client_id`, `prod_id`) VALUES (?, ?);";;
-      $mysqli->execute_query($sql, [$userid, $productid]);
+      $userid = htmlspecialchars($_SESSION['userid']);
+      $productid = htmlspecialchars($_POST['id']);
 
-      $sql_ = "UPDATE `products` SET status = 'accepted' WHERE id = ?";
-      $mysqli->execute_query($sql_, [$productid]);
+
+      $stmt = "SELECT client_id, prod_id FROM `client_prod`";
+      $stmt = $mysqli->execute_query($stmt);
+      $result = $stmt->fetch_all(MYSQLI_ASSOC);
+
+      foreach ($result as $r) {
+
+        if (((int)$productid  === (int)$r['prod_id']) && ((int)$userid  === (int)$r['client_id'])) {
+          echo 'match found ' .  var_dump($r) . '<br>';
+          $valid = false;
+          break 1;
+        } else {
+          echo 'no match found. <br>';
+          $valid = true;
+        }
+      }
+      if ($valid) {
+        // INSERT query to add a client-product relationship in the lookup table
+        // Uses the previously sanitized variables $userid or $productid as
+        // appropriate
+
+        $mysqli->execute_query("INSERT INTO `client_prod` (`client_id`, `prod_id`) VALUES (?, ?);", [$userid, $productid]);
+
+        // if ($mysqli->execute_query("SELECT * FROM `client_prod` WHERE prod_id=?;", [$productid])) {
+        // Because accept was pressed, at least 1 person has accepted the product, so
+        // we change the value to 'accepted' for that column
+        $status = determineStatus($productid, $mysqli);
+        echo $status;
+        $mysqli->execute_query("UPDATE `products` SET products.status = ? WHERE id = ?", [$status, $productid]);
+        header('Location: ./profile.php');
+      }
+
       if ($mysqli->errno) {
         echo 'SQL Error: ' . $mysqli->error;
       }
-
-      #, [$_SESSION['userid'], $_POST['id'], $_SESSION['userid'], $_POST['id']]);
     }
   }
 }
 // Function to determine the status of a product, accepted versus pending. Accepted
 // means the client is currently invested. Pending means the client is not, but can.
-// function determineStatus($product, $userid, $mysqli)
-// {
-//   $sql = "SELECT * FROM `client_prod` WHERE client_prod.prod_id = ? AND client_prod.client_id = ?";
-//   // $res = $mysqli->execute_query($sql, [$product, $userid]);
-//   // $active = $res->fetch_all();
-//   // $res_ = $mysqli->execute_query("SELECT * FROM products");
-//   // $potential = $res_->fetch_all();
+function determineStatus($product, $mysqli)
+{
+  $sql = "SELECT * FROM `client_prod` WHERE client_prod.prod_id = ?";
+  // $res = $mysqli->execute_query($sql, [$product, $userid]);
+  // $active = $res->fetch_all();
+  // $res_ = $mysqli->execute_query("SELECT * FROM products");
+  // $potential = $res_->fetch_all();
 
-//   // for($a = 0; $a < count($active); $a++;) {
-//   //   for ($p = 0; $p < count($potential); $p++ ) {
-//   //     if ($potential[$p]['id'] === $active[$a]['prod_id']) {
-//   //       continue;
-//   //     } else {
-//   //       array_push($_SESSION['userprods'], $p);
-//   //     }
-//   //   }
-//   // }
-//   if ($mysqli->execute_query($sql, [$product, $userid])) {
-//     return 'accepted';
-//   } else {
-//     return 'pending';
-//   };
-// }
+  // for($a = 0; $a < count($active); $a++;) {
+  //   for ($p = 0; $p < count($potential); $p++ ) {
+  //     if ($potential[$p]['id'] === $active[$a]['prod_id']) {
+  //       continue;
+  //     } else {
+  //       array_push($_SESSION['userprods'], $p);
+  //     }
+  //   }
+  // }
+  $success_check = $mysqli->execute_query($sql, [$product]);
+  if ($success_check) {
+    return 'accepted';
+  } else {
+    return 'pending';
+  };
+}
 //
 // Sadly this never worked. It would be much easier to handle with JavaScript to 
 // simply edit CSS class names conditionally.
@@ -197,7 +225,6 @@ if ($_POST) {
               foreach ($client_active_products as $cap) {
                 if ($available[$a]['abbr'] === $cap['abbr']) {
                   array_splice($available, $a, 1);
-                  break;
                   // if (count($available) === abs(count($available) - count($client_active_products))) {
                   //   break;
                   // } else {
@@ -257,7 +284,6 @@ if ($_POST) {
             <?php endforeach ?>
           <?php endif ?>
         </div>
-        </table>
       </div>
     <?php endif ?>
     <?php if ($_SESSION['type'] === 'admin') : ?>

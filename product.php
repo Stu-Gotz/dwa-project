@@ -23,14 +23,18 @@ if (!isset($_SESSION['userid'])) {
 //         header('Location: ./profile.php');
 //     }
 // }
+if (isset($_POST['action'])) {
+    delete_product($product, $mysqli);
+}
 
-delete_product($product, $mysqli);
-header("Location: './products.php'");
-
+// SQL Statement to gather all products available
+// This is used to display data of a product.
 $sql = "SELECT * FROM `products` WHERE id = ?";
 $res = $mysqli->execute_query($sql, [$product]);
 $prod = $res->fetch_assoc();
-var_dump($prod);
+
+// SQL Statement to find all users that are invested in the product and
+// have accepted it to their profile
 $sql_ = "SELECT client_id FROM `client_prod` WHERE prod_id=?";
 $res_ = $mysqli->execute_query($sql_, [$product]);
 $users = $res_->fetch_all(MYSQLI_ASSOC);
