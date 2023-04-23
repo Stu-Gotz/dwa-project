@@ -1,4 +1,8 @@
-<?php include './header.php'; ?>
+<?php include './header.php'; 
+
+//A static page of fake user testimonials. Future improvements could be taking testimonials through a form
+//and serving them to the page with database lookups.
+?>
 <div class="test-wrapper">
 
     <h1>Testimonials</h1>

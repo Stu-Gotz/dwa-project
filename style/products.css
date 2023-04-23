@@ -21,6 +21,7 @@
     display: flex;
     flex: 2;
     flex-flow: column;
+    height: 100%;
 }
 
 #adv-info {

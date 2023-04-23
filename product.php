@@ -1,4 +1,9 @@
 <?php include './header.php';
+
+// the ID can come through either a $_POST or $_GET request
+// $_POST when it is being deleted or $_GET when it is being viewed
+//it is initialised as an empty string so it can be passed around outside of the If statements
+
 $product = "";
 
 if ($_POST) {
@@ -6,24 +11,13 @@ if ($_POST) {
 } elseif ($_GET) {
     $product = $_GET['id'];
 }
-#htmlspecialchars($_POST['submit']['id']);
 
 //keep pages private from non-registered users
 if (!isset($_SESSION['userid'])) {
     header('Location: ./login.php');
 }
 
-// if ($_POST) {
-
-//     if (isset($_POST['id']) && filter_var($_POST['id'], FILTER_SANITIZE_SPECIAL_CHARS)) {
-//         $sql = "DELETE FROM `products` WHERE id=?";
-//         $mysqli->execute_query($sql, [$product]);
-//         $sql_ = "DELETE FROM `client_prod` WHERE prod_id=?";
-//         $mysqli->execute_query($sql_, [$product]);
-//         header('Location: ./profile.php');
-//     }
-// }
-if (isset($_POST['action'])) {
+if (isset($_POST['action']) && $_POST['action'] === 'Delete') {
     delete_product($product, $mysqli);
 }
 
@@ -39,14 +33,16 @@ $sql_ = "SELECT client_id FROM `client_prod` WHERE prod_id=?";
 $res_ = $mysqli->execute_query($sql_, [$product]);
 $users = $res_->fetch_all(MYSQLI_ASSOC);
 
+// create an empty array to hold all the users invested in the product
 $invested_users = array();
 
+//iterate over all users who are invested in a product, and get their information from the db
 for ($u = 0; $u < count($users); $u++) {
     $usersql = "SELECT users.id, users.first_name, users.last_name, users.email FROM `users`
     WHERE id=?";
     $results = $mysqli->execute_query($usersql, [$users[$u]['client_id']]);
     $user = $results->fetch_all(MYSQLI_ASSOC)[0];
-    array_push($invested_users, $user);
+    array_push($invested_users, $user); //add to array
 }
 
 
@@ -68,17 +64,18 @@ for ($u = 0; $u < count($users); $u++) {
         <div class="prod-info" id="product-type">Product Type: <?php echo $prod['type']; ?></div>
     </div>
     <div class="about-prod">
-        <?php if (count($invested_users) === 0) {
+        <?php //if nobody has invested, put a message otherwise list out all clients
+        if (count($invested_users) === 0) {
             echo 'Nobody has invested in this product yet.';
         } else {
             echo 'The following clients have invested in this product: <br>';
         } ?>
         <?php for ($i = 0; $i < count($invested_users); $i++) : ?>
-
             <?php echo '<a href="./user.php?email=' .  $invested_users[$i]['email'] . '">' . $invested_users[$i]['first_name'] . ' ' . $invested_users[$i]['last_name'] . '</a><br>' ?>
         <?php endfor ?>
 
     </div>
+    <!-- special button for admin users that allows them to delete the product -->
     <?php if (isset($_SESSION['type']) && $_SESSION['type'] === 'admin') : ?>
         <div class="admin-controls">
             <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="POST">

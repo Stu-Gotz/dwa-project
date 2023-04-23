@@ -1,5 +1,9 @@
 <?php include 'header.php'; ?>
-<!-- Main section -->
+<!-- Main section 
+
+Simple, nice layout that provides panels for new customers to browse about the company
+if there was more time, we would have liked to include a feedback form to dynamically testimonials, but it wasnt a requirement
+Everything but the contact.php is just static text-serving pages. -->
 <div class="content">
   <div class="tile" id="tile1">
     <a href="./investing.php" class="invest">Invest With Us</a>

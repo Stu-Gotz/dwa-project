@@ -1,7 +1,8 @@
 <?php include './header.php';
 
-if (isset($_POST['submit'])) {
 
+if (isset($_POST['submit'])) {
+    
     $type = htmlspecialchars($_POST['type']);
     $ind = htmlspecialchars($_POST['ind']);
     $country = htmlspecialchars($_POST['country']);

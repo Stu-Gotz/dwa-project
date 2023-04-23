@@ -4,25 +4,31 @@
 if (!isset($_SESSION['userid'])) {
   header('Location: ./login.php');
 }
-$id = $_SESSION['userid'];
+
+//ID needs to be declared outside everything because it is used 
+$id = htmlspecialchars($_SESSION['userid']);
 
 if (isset($_POST['submit']) && $_POST['submit'] === 'Submit') {
   var_dump($_POST);
   // Logic to handle what is updated, since not everything may be changed at one time.
   // Password Change
-  if ($_POST['password'] && !($_POST['password'] === "")) {
-    if ($_POST['password-conf'] && !($_POST['password-conf'] === "")) {
+  if ($_POST['password'] && !($_POST['password'] === "")) { //password cannnot be empty
+    if ($_POST['password-conf'] && !($_POST['password-conf'] === "")) { //password confirmation cannot be empty
       if (
         filter_var(htmlspecialchars($_POST['password']), FILTER_SANITIZE_SPECIAL_CHARS) &&
         filter_var(htmlspecialchars($_POST['password-conf']), FILTER_SANITIZE_SPECIAL_CHARS)
-      ) {
+      ) { //security check
         $password = htmlspecialchars($_POST['password']);
         $passconf = htmlspecialchars($_POST['password-conf']);
-        if (htmlspecialchars($password) === htmlspecialchars($passconf)) {
-          $hashed = password_hash($password, PASSWORD_DEFAULT);
+        //the logic contained within this if statement is the same for every field, with some minor changes as the type
+        //of data entered changes. the only difference is file. 
+        if (htmlspecialchars($password) === htmlspecialchars($passconf)) { //both password and confirmation password must match
+          $hashed = password_hash($password, PASSWORD_DEFAULT); //hash the password because it shouldn't be stored in the db in plaintext
+
+          //sql query to update entry
           $sql = "UPDATE `users` SET  password = '$hashed' WHERE `users`.`id`=?;";
           $mysqli->execute_query($sql, [$id]);
-          $_SESSION['password'] = $hashed;
+          $_SESSION['password'] = $hashed; //update the session variable as well
         } else {
           echo 'passwords to not match';
         }
@@ -44,6 +50,7 @@ if (isset($_POST['submit']) && $_POST['submit'] === 'Submit') {
     $mysqli->execute_query("UPDATE `users` SET phone = '$phone' WHERE id=?", [$id]);
     $_SESSION["phone"] = $phone;
   }
+  // Email change
   if ($_POST['email'] && !($_POST['email'] === "")) {
     if (filter_var(htmlspecialchars($_POST['email']), FILTER_SANITIZE_EMAIL)) {
       $email = htmlspecialchars($_POST['email']);
@@ -63,36 +70,36 @@ if (isset($_POST['submit']) && $_POST['submit'] === 'Submit') {
   */
   if ($_FILES['upload'] && is_uploaded_file($_FILES['upload']['tmp_name'])) {
     $uploadOk = 1;
-    $path = "./assets/";
+    
+    $path = "./assets/"; //destination path for profile pictures
+
+    //parse the $_FILES variable into easier to use variables
     $tmp_name = $_FILES['upload']['tmp_name'];
-    $name = $_FILES['upload']['name'];
-    $hash = md5($name);
+    $name = $_FILES['upload']['name']; //the filename
+    $hash = md5($name); //ensure uniqueness
 
     $filetype = strtolower(pathinfo($name, PATHINFO_EXTENSION));
     $file_path = $path . $hash . '.' . $filetype;
     $filename = $hash . '.' . $filetype;
 
+    //The statements below are 
+
+    //file must be under 10MB.
     if ($_FILES['upload']['size'] > 10485760) {
       array_push($_SESSION['errors'], "Filesize too large");
       echo "Filesize too large, uploads must be under 10mb";
       $uploadOk = 0;
-    } else 
-
-    if ($filetype != "jpg" && $filetype != "png" && $filetype != "jpeg" && $filetype != "bmp" && $filetype != "svg") {
-      array_push($_SESSION['errors'], "Unsupported filetype");
+    } elseif ($filetype != "jpg" && $filetype != "png" && $filetype != "jpeg" && $filetype != "bmp" && $filetype != "svg") { //must validate file extensions to be valid.
       echo "We only accept files in format: JPG, PNG, JPEG, BMP or SVG.";
       $uploadOk = 0;
-    } else 
-
-    if ($uploadOk = 0) {
-      echo "There was an error(s) with your upload.";
-      $_SESSION['errors'] = $errors;
-      // header('Location: ./settings.php');
+    } elseif ($uploadOk = 0) {
+      echo "There was a(n) error(s) with your upload.";
+          // header('Location: ./settings.php');
     } else {
-      $_SESSION['errors'] = [];
+      $_SESSION['errors'] = []; //clear session errors array
       if (move_uploaded_file($tmp_name, $file_path)) {
-        $mysqli->execute_query("UPDATE `users` SET photo = ? WHERE id=?", [$filename, $id]);
-        $_SESSION['photo'] = $file_path;
+        $mysqli->execute_query("UPDATE `users` SET photo = ? WHERE id=?", [$filename, $id]); //replace picture in database
+        $_SESSION['photo'] = $file_path; //modify session variable to reflect change
         echo 'Successfully uploaded new photo!';
       }
     }
@@ -136,9 +143,15 @@ if (isset($_POST['submit']) && $_POST['submit'] === 'Submit') {
     }
   }
 
-  // } elseif ($_POST['reset']) {
-  //   $sql = "DELETE FROM client_prefs WHERE client_id = " . $id;
-  //   $res = $mysqli->query($sql);
+  } elseif ($_POST['reset']) {
+    //clear user preferences.
+    //this is not actually a good solution to handling user preferences
+    //but for time constraints it was adequate functionality for this project
+
+    //simply sends a SQL query to the database to delete any stored preferences for the user
+
+    $sql = "DELETE FROM client_prefs WHERE client_id = " . $id;
+    $mysqli->query($sql);
 }
 ?>
 
@@ -173,7 +186,8 @@ if (isset($_POST['submit']) && $_POST['submit'] === 'Submit') {
       <label for="password-conf">Confirm Password: </label>
       <input type="password" name="password-conf" id="password-conf">
     </div>
-    <?php if ($_SESSION['type'] === 'client') : ?>
+    <?php if ($_SESSION['type'] === 'client') : 
+      // render conditionally if a client is logged in ?>
 
       <div class="preferences-form-area" id="preferences-type">
         <label for="type">Asset Type: </label>

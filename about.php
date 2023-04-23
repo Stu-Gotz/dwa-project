@@ -1,4 +1,5 @@
 <?php include './header.php';
+//A static page with information about the company.
 ?>
 <div class="about-wrapper">
     <h1 class="about-header-main">Welcome to Smarter Investing Inc!</h1>

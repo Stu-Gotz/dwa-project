@@ -1,5 +1,5 @@
 <?php
-
+//stores database information
 return [
     'DB_USER' => 'root',
     'DB_PASS' => '',

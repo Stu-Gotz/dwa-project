@@ -1,21 +1,21 @@
 <?php
 include 'header.php';
-// TODO
 
-/* 
-1 ACCEPT OR DECLINE INVESTMENT IDEA @ TABLE
-
-*/
 //contains the blank avatar image
 $default = './assets/blank-profile.png';
 
-//keep pages private from non-registered users
+//keep certain pages private from non-registered users
 if (!isset($_SESSION['userid'])) {
   header('Location: ./login.php');
 }
 
 if ($_POST) {
 
+  /* If the user elects to remove an item, it will first check if they are a client. RMs cannot remove
+     investments on the behalf of clients, or subscribe to them.
+     The client vs admin check is because the same component is being re-used on both pages.
+
+  */ 
   if ($_POST['action'] && ($_POST['action'] === "Remove")) {
     if ($_SESSION['type'] === 'client') {
       $prod_id = (int)htmlspecialchars($_POST['id']);
@@ -23,10 +23,10 @@ if ($_POST) {
       $client_id = (int)htmlspecialchars($_SESSION['userid']);
 
 
-      //remove product from lookup tables
+      // remove lookup table entry b by searching for matching product and client IDs
       $sql = "DELETE FROM `client_prod` WHERE prod_id = $prod_id AND client_id = $client_id;";
       if ($mysqli->query($sql)) {
-
+        // Remove the entry from the $_SESSION['userprods'] array
         unset($_SESSION['userprods'][$row_id]);
 
         header("Location: ./profile.php");
@@ -34,30 +34,48 @@ if ($_POST) {
         echo 'Error: ' . $mysqli->error;
       }
     } elseif ($_SESSION['type'] === "admin") {
+      // since admins only delete items fullstop, it will delete the product
+      // with the delete_product custom function, found in header.php.
+      // this function removes the product both from all the lookup table
+      // and from the products data table
       delete_product(htmlspecialchars($_POST['id']), $mysqli);
       header("Location: ./profile.php");
     }
   }
+  /* an approve request only comes from the client, at the moment. The RM's 
+    approval functions have not been implemented.
+    By getting the ID of the product, and the user_id from the $_SESSION variable,
+    the user can add and remove items from their portfolio.
+   this also updates the tables
+   */
   if ($_POST['action'] && ($_POST['action'] === 'Approve')) {
+
+    // validation check boolean variable. changes to true 
+    // if no matches are found in the validation check.
     $valid = false;
+  
     if ($_POST['id'] && (filter_var($_POST['id'], FILTER_SANITIZE_SPECIAL_CHARS))) {
       $userid = htmlspecialchars($_SESSION['userid']);
       $productid = htmlspecialchars($_POST['id']);
 
+      // need all client-product relation data to perform validation checks
 
       $stmt = "SELECT client_id, prod_id FROM `client_prod`";
       $stmt = $mysqli->execute_query($stmt);
       $result = $stmt->fetch_all(MYSQLI_ASSOC);
 
+      /* Validation Check:
+        if the IDs already exist in the lookup table, then the entry is invalid
+        the validation check is explicitly set to false in case it changed because previous values did not match
+        the loop then breaks and the logic ceases for this action.
+      */
       foreach ($result as $r) {
 
         if (((int)$productid  === (int)$r['prod_id']) && ((int)$userid  === (int)$r['client_id'])) {
-          echo 'match found ' .  var_dump($r) . '<br>';
           $valid = false;
-          break 1;
+          break 1; //<--- jump out of the loop. one fail is all we need.
         } else {
-          echo 'no match found. <br>';
-          $valid = true;
+          $valid = true; //<--set it true if there isnt a match on this instance. if it stays true to the end, continue with logic below
         }
       }
       if ($valid) {
@@ -70,8 +88,7 @@ if ($_POST) {
         // if ($mysqli->execute_query("SELECT * FROM `client_prod` WHERE prod_id=?;", [$productid])) {
         // Because accept was pressed, at least 1 person has accepted the product, so
         // we change the value to 'accepted' for that column
-        $status = determineStatus($productid, $mysqli);
-        echo $status;
+        $status = determineStatus($productid, $mysqli); //returns 'pending' or 'accepted'
         $mysqli->execute_query("UPDATE `products` SET products.status = ? WHERE id = ?", [$status, $productid]);
         header('Location: ./profile.php');
       }
@@ -82,41 +99,26 @@ if ($_POST) {
     }
   }
 }
+
 // Function to determine the status of a product, accepted versus pending. Accepted
-// means the client is currently invested. Pending means the client is not, but can.
+// means any client is currently invested. Pending means the client is not, but can.
 function determineStatus($product, $mysqli)
 {
-  $sql = "SELECT * FROM `client_prod` WHERE client_prod.prod_id = ?";
-  // $res = $mysqli->execute_query($sql, [$product, $userid]);
-  // $active = $res->fetch_all();
-  // $res_ = $mysqli->execute_query("SELECT * FROM products");
-  // $potential = $res_->fetch_all();
-
-  // for($a = 0; $a < count($active); $a++;) {
-  //   for ($p = 0; $p < count($potential); $p++ ) {
-  //     if ($potential[$p]['id'] === $active[$a]['prod_id']) {
-  //       continue;
-  //     } else {
-  //       array_push($_SESSION['userprods'], $p);
-  //     }
-  //   }
-  // }
-  $success_check = $mysqli->execute_query($sql, [$product]);
-  if ($success_check) {
+  //Function works by querying the lookup table and seeing if the product id exists there
+  //if it does, then someone has subscribed to it, and it is accepted. otherwise the query
+  //returns false and it must be pending.
+  $sql = "SELECT * FROM `client_prod` WHERE client_prod.prod_id = ?";  
+  if ($mysqli->execute_query($sql, [$product])) {
     return 'accepted';
   } else {
     return 'pending';
   };
 }
-//
-// Sadly this never worked. It would be much easier to handle with JavaScript to 
-// simply edit CSS class names conditionally.
+
 ?>
 
 <div class="profile-page">
   <?php include './components/sidebar.php' ?>
-  <!-- Pages will render differently based on the type of user that is loged in
-    Client users: will be given a  -->
   <div class="profile">
     <?php include './components/profilehead.php' ?>
     <?php if ($_SESSION['type'] === 'rm') : ?>
@@ -132,7 +134,8 @@ function determineStatus($product, $mysqli)
           </thead>
           <tbody class="table-data">
             <?php
-
+            //sql query finds all users who are managed by the RM.
+            //these users and their information is displayed in a table on the RM's page
             $sql = "SELECT users.id, users.email, users.first_name, users.last_name, 
             users.location , users.phone FROM `users` INNER JOIN client_rm ON 
             rm_id = ? AND users.id = client_rm.client_id";
@@ -171,8 +174,8 @@ function determineStatus($product, $mysqli)
           </thead>
           <tbody class="table-data">
             <?php
-            $client_active_products = [];
-
+            
+            //perform a SQL query to get all the data, then iterate over the resulting array and place values into locations
             $sql = 'SELECT products.type, products.name, products.country, products.closing_price, 
             products.abbr, products.exchange, products.id, products.status FROM `products` INNER JOIN 
             `client_prod` ON client_id = ? AND products.id = client_prod.prod_id';
@@ -191,7 +194,7 @@ function determineStatus($product, $mysqli)
             <td>' . htmlspecialchars($client_active_products[$i]['type']) . '</td>
             <td>' . htmlspecialchars($client_active_products[$i]['country']) . '</td>
             <td>' . htmlspecialchars($client_active_products[$i]['exchange']) . '</td>
-            <td> <form action="' . htmlspecialchars($_SERVER['PHP_SELF']) .
+            <td> <form action="' . htmlspecialchars($_SERVER['PHP_SELF']) . //this form/input sends variables to $_POST to be used for updating data
                 '" method="post"><input class="btn btn-del" type="submit" name="action" value="Remove"/><input type="hidden" name="row" value="'
                 . $i . '"/><input type="hidden" name="id" value="' .
                 htmlspecialchars($client_active_products[$i]['id']) . '"/> </form></td>
@@ -216,23 +219,23 @@ function determineStatus($product, $mysqli)
           </thead>
           <tbody class="table-data">
             <?php
-
+            //perform a sql query to get all products.
             $sql_ = 'SELECT * FROM `products`';
             $res_ = $mysqli->execute_query($sql_);
             $available = $res_->fetch_all(MYSQLI_ASSOC);
-
+            
+            //perform a check if any of the client's current 
+            //investments are listed in the total products from above
+            //if it is, remove that product array from the total
+            //then same as the table above, iterate over and display data
             for ($a = 0; $a < count($available); $a++) {
               foreach ($client_active_products as $cap) {
                 if ($available[$a]['abbr'] === $cap['abbr']) {
                   array_splice($available, $a, 1);
-                  // if (count($available) === abs(count($available) - count($client_active_products))) {
-                  //   break;
-                  // } else {
-                  // }
                 }
               }
             }
-            echo count($available);
+            echo count($available); //<- nice little count for potential products
             for ($i = 0; $i < count($available); $i++) {
               echo '<tr class="pending">
             <td><a href="./product.php?id=' .
@@ -259,9 +262,14 @@ function determineStatus($product, $mysqli)
         <div class="client-prefs">
           <h2>Preferences </h2>
           <?php
+          // this is the same basic idea as above, except this uses if/end if and for/end for
+          // which I prefer because it doesnt require so much string concatenation.
+          // this part wasnt developed until later though and thats why there is inconsistency in the
+          // code blocks. "dont let perfect be the enemy of good".
           $sql_ = 'SELECT * FROM client_prefs WHERE client_id=?';
           $res_ = $mysqli->execute_query($sql_, [$_SESSION['userid']]);
           $prefs = $res_->fetch_all(MYSQLI_ASSOC);
+          
           ?>
           <?php if ($prefs) : ?>
             <?php foreach ($prefs as $p) : ?>
@@ -303,10 +311,11 @@ function determineStatus($product, $mysqli)
           </thead>
           <tbody class="table-data">
             <?php
+            //admin needs all products
             $sql = "SELECT DISTINCT * FROM `products`;";
             $res = $mysqli->execute_query($sql);
             $all_products = $res->fetch_all(MYSQLI_ASSOC);
-
+            //get results, iterate and fill
             for ($i = 0; $i < count($all_products); $i++) {
               echo '<tr>
             <td><a href="./product.php?id=' . $all_products[$i]['id'] . '">' . $all_products[$i]['abbr'] . '</a></td>

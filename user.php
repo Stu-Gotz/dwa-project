@@ -1,10 +1,20 @@
 <?php include 'header.php';
+/* 
+A lot of this page is very similar to the profile.php. For any notes relating to how the tables are generated,
+please see the comments in that file
+
+There is no table rendering for the admin because there is nothing that a visiting person would need to know, at this point in production.
+
+*/
 
 //keep pages private from non-registered users
 if (!isset($_SESSION['userid'])) {
     header('Location: ./login.php');
 }
 
+//the email, because they are unique, will be used to identify which profile the user is trying to view
+//the $user variable is then passed around the page to populate information.
+//the [0] indexer ensures we only get an array with 1 entry, in case email validation failed
 if (isset(($_GET['email'])) && filter_var($_GET['email'], FILTER_VALIDATE_EMAIL)) {
     $email = htmlspecialchars($_GET['email']);
     $sql = "SELECT * FROM `users` WHERE email = ?";
@@ -15,10 +25,13 @@ if (isset(($_GET['email'])) && filter_var($_GET['email'], FILTER_VALIDATE_EMAIL)
 
 ?>
 
+
 <div class="user-page">
+    <?php include './components/sidebar.php' ?>
     <div class="profile">
         <?php include './components/userhead.php'; ?>
     </div>
+    
     <div class="user-table-area">
         <?php if (isset($user['type']) && $user['type'] === 'client') : ?>
             <table>
@@ -99,7 +112,7 @@ if (isset(($_GET['email'])) && filter_var($_GET['email'], FILTER_VALIDATE_EMAIL)
             $res_ = $mysqli->execute_query($sql_, [$user['id']]);
             $client_list = $res_->fetch_all(MYSQLI_ASSOC);
 
-            if (isset($client_list)) {
+            if ($client_list) {
                 for ($i = 0; $i < count($client_list); $i++) {
                     echo '<tr>
                         <td><img style="height:50px; width: 50px; border-radius: 50%;" src="./assets/' . $client_list[$i]['photo'] . '" /></td>
@@ -111,6 +124,7 @@ if (isset(($_GET['email'])) && filter_var($_GET['email'], FILTER_VALIDATE_EMAIL)
         </tbody>
     </table>
 <?php endif ?>
+
 </div>
 </div>
 <?php include 'footer.php' ?>
